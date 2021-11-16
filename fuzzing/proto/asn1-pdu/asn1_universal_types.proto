@@ -1,0 +1,136 @@
+// Copyright 2020 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// This proto represents the DER-encoding (X.690 (2015)) of the Universal class
+// types used by ASN.1. See X.680 (2015), Section 8.6, Table 1 for the
+// possible types.
+syntax = "proto2";
+
+import "google/protobuf/timestamp.proto";
+
+package asn1_universal_types;
+
+// This represents an ASN.1 Boolean, which takes on the value true or false
+// (X.690 (2015), 8.2).
+message Boolean {
+  required bool val = 1;
+}
+
+// This represents an ASN.1 OCTET STRING, which denotes an arbitrary string of
+// bits (X.690 (2015), 8.7).
+message OctetString {
+  required bytes val = 1;
+}
+
+// This represents an ASN.1 BIT STRING, which denotes an arbitrary string of
+// bits (X.690 (2015), 8.6).
+message BitString {
+  required bytes val = 1;
+  // The initial octet shall encode, as an unsigned binary integer
+  // with bit 1 as the least significant bit, the number of unused bits
+  // in the final subsequent octet (X.690 (2015), 8.6.2.2).
+  required UnusedBits unused_bits = 2;
+}
+
+// The number shall be in the range zero to seven. (X.690 (2015), 8.6.2.2).
+enum UnusedBits {
+  VAL0 = 0;
+  VAL1 = 1;
+  VAL2 = 2;
+  VAL3 = 3;
+  VAL4 = 4;
+  VAL5 = 5;
+  VAL6 = 6;
+  VAL7 = 7;
+}
+
+// This represents an ASN.1 INTEGER, which is a 2’s
+// compliment number (X.690 (2015), 8.3).
+message Integer {
+  // Use a series of bytes and let the fuzzer make it positive or negative.
+  required bytes val = 1;
+}
+
+// This represents an ASN.1 UTCTime (X.690 (2015), 11.8).
+message UTCTime {
+  required google.protobuf.Timestamp time_stamp = 1;
+}
+
+// This represents an ASN.1 GeneralizedTime (X.690 (2015), 11.7).
+message GeneralizedTime {
+  required google.protobuf.Timestamp time_stamp = 1;
+}
+
+// This represents an ASN.1 ObjectIdentifier (X.690 (2015), 8.19).
+message ObjectIdentifier {
+  required RootNode root = 1;
+  required SmallIdentifier small_identifier = 2;
+  // The contents octets shall be a list of encodings of
+  // subidentifiers (X.690 (2015), 8.19.2-4).
+  repeated uint32 subidentifier = 4;
+}
+
+// (X.690 (2015) 8.19.4): Only three values are allocated from the root node.
+enum RootNode {
+  RN_VAL_0 = 1;
+  RN_VAL_1 = 2;
+  RN_VAL_2 = 3;
+}
+
+// (X.690 (2015) 8.19.4): At most 39 subsequent values from nodes reached by
+// X = 0 and X = 1.
+enum SmallIdentifier {
+  SI_VAL_0 = 0;
+  SI_VAL_1 = 1;
+  SI_VAL_2 = 2;
+  SI_VAL_3 = 3;
+  SI_VAL_4 = 4;
+  SI_VAL_5 = 5;
+  SI_VAL_6 = 6;
+  SI_VAL_7 = 7;
+  SI_VAL_8 = 8;
+  SI_VAL_9 = 9;
+  SI_VAL_10 = 10;
+  SI_VAL_11 = 11;
+  SI_VAL_12 = 12;
+  SI_VAL_13 = 13;
+  SI_VAL_14 = 14;
+  SI_VAL_15 = 15;
+  SI_VAL_16 = 16;
+  SI_VAL_17 = 17;
+  SI_VAL_18 = 18;
+  SI_VAL_19 = 19;
+  SI_VAL_20 = 20;
+  SI_VAL_21 = 21;
+  SI_VAL_22 = 22;
+  SI_VAL_23 = 23;
+  SI_VAL_24 = 24;
+  SI_VAL_25 = 25;
+  SI_VAL_26 = 26;
+  SI_VAL_27 = 27;
+  SI_VAL_28 = 28;
+  SI_VAL_29 = 29;
+  SI_VAL_30 = 30;
+  SI_VAL_31 = 31;
+  SI_VAL_32 = 32;
+  SI_VAL_33 = 33;
+  SI_VAL_34 = 34;
+  SI_VAL_35 = 35;
+  SI_VAL_36 = 36;
+  SI_VAL_37 = 37;
+  SI_VAL_38 = 38;
+  SI_VAL_39 = 39;
+}
