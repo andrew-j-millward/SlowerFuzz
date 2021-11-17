@@ -44,7 +44,7 @@ if __name__ == '__main__':
 		if args.path == 'boringssl-2016-02-12':
 			stream = os.popen('echo Returned output')
 			output = stream.read()
-			output
+			print(output)
 		elif args.path == 'c-ares-CVE-2016-5180':
 			pass
 		elif args.path == 'freetype2-2017':
