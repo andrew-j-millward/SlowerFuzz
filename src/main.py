@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
 		# Initialize environment
 		if args.path == 'boringssl-2016-02-12':
-			stream = os.popen('./libFuzzerSetup/setup_' + args.path + '.sh')
+			stream = os.popen('sh libFuzzerSetup/setup_' + args.path + '.sh')
 			output = stream.read()
 			print(output)
 		elif args.path == 'c-ares-CVE-2016-5180':
