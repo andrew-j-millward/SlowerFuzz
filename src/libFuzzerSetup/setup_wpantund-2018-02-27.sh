@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf wpantund-2018-02-27_tmp;
 mkdir -p wpantund-2018-02-27_tmp;
 cd wpantund-2018-02-27_tmp;

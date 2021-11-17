@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf libpng-1.2.56_tmp;
 mkdir -p libpng-1.2.56_tmp;
 cd libpng-1.2.56_tmp;

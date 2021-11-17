@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf openssl-1.1.0c_tmp;
 mkdir -p openssl-1.1.0c_tmp;
 cd openssl-1.1.0c_tmp;

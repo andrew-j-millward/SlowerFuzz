@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf boringssl-2016-02-12_tmp;
 mkdir -p boringssl-2016-02-12_tmp;
 cd boringssl-2016-02-12_tmp;

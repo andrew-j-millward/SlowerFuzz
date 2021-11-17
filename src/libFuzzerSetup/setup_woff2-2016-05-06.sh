@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf woff_tmp;
 mkdir -p woff_tmp;
 cd woff_tmp;

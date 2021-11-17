@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf freetype2-2017_tmp;
 mkdir -p freetype2-2017_tmp;
 cd freetype2-2017_tmp;

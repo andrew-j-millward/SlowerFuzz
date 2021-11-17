@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf re2-2014-12-09_tmp;
 mkdir -p re2-2014-12-09_tmp;
 cd re2-2014-12-09_tmp;
