@@ -19,6 +19,7 @@ if __name__ == '__main__':
 						default=25)
 	parser.add_argument('-p', '--path', type=str, metavar='', help='Path to target. I.e. input "woff2-2016-05-06" will lead to ../FTS/woff2-2016-05-06',
 						default='woff2-2016-05-06')
+	parser.add_argument('-l', '--libfuzzer', action='store_true', help='Use libFuzzer instead for coverage testing')
 
 	args = parser.parse_args()
 
