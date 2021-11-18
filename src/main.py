@@ -33,7 +33,7 @@ def runTest(name, timeout_period, seeds=[1]):
 	#		print(int(parsed2[0]))
 	#		break
 	for i in range(len(seeds)):
-		subpro = run('../' + name + '_tmp/' + name + '-fsanitize_fuzzer -seed=' + seeds[i] + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+		subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
 		output = subpro.stderr.split('\n')
 		coverage = {}
 		for j in range(len(output)):
