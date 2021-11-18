@@ -68,7 +68,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-d', '--depth', type=int, metavar='', help='Number of elimination rounds',
-                        default=10)
+                        default=5)
     parser.add_argument('-t', '--time', type=int, metavar='', help='Maximum exploration steps before analyzing the results',
                         default=1000)
     parser.add_argument('-s', '--seeds', type=int, metavar='', help='Number of seeds per elimination round',
