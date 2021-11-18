@@ -80,10 +80,10 @@ if __name__ == '__main__':
                     shutil.rmtree('../' + tests[i] + '_tmp')
         elif args.path in tests:
             initializeEnv(args.path)
-            runTest(args.path, args.time)
+            runTest(args.path, args.timeout)
         elif args.path in debug_test:
         	initializeEnv(args.path)
-        	runTest(args.path, args.time)
+        	runTest(args.path, args.timeout)
         elif args.path == 'all':
             initializeEnv(args.path)
 
