@@ -5,12 +5,26 @@ sys.path.append('..fuzzing')
 sys.path.append('..slowfuzz')
 sys.path.append('..woff')
 import argparse, random, math, os, shutil
+from subprocess import STDOUT, check_output, TimeoutExpired
 
 def initializeEnv(name):
 	shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
 	out = shellStream.read()
 	print(out)
 
+def runTest(name, timeout_period):
+	out = ''
+	try:
+	    out = check_output('./' + name + '_tmp/' + name + '-fsanitize_fuzzer', stderr = STDOUT, timeout = timeout_period)
+	    out_formatted = ''.join(map(chr, out))
+	    print(out_formatted)
+	except TimeoutExpired as e:
+	    print('Error: Time limit exceeded, terminated..')
+	    print(out)
+
+	f = open('report.txt','w')
+	f.write(strOutput)
+	f.close()
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
@@ -54,6 +68,7 @@ if __name__ == '__main__':
 					shutil.rmtree('../' + tests[i] + '_tmp')
 		elif args.path == 'boringssl-2016-02-12':
 			initializeEnv(args.path)
+			runTest(args.path, args.time)
 		elif args.path == 'c-ares-CVE-2016-5180':
 			initializeEnv(args.path)
 		elif args.path == 'freetype2-2017':
