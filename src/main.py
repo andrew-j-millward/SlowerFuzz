@@ -19,12 +19,9 @@ def initializeEnv(name):
 
 def runTest(name, timeout_period):
 	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE)
-	for i in range(timeout_period):
-		sleep(1)
-		if subprocess.poll() is not None:
-			break
+	sleep(timeout_period)
 	output = subprocess.communicate()
-	subprocess.kill()
+	os.killpg(os.getpgid(server.pid), signal.SIGTERM)
 	print(output)
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
 	#out = shellStream.read()
