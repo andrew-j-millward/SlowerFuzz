@@ -18,6 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
+	print(("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period)).split(' '))
 	subpro = Popen(("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period)).split(' '), stdout=PIPE, shell=True)
 	(out, err) = subpro.communicate()
 	#os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
