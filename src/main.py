@@ -10,9 +10,12 @@ from time import sleep
 from subprocess import Popen, PIPE
 
 def initializeEnv(name):
-    shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
-    out = shellStream.read()
-    print(out)
+	if not os.path.isdir('../' + name + '_tmp'):
+	    shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
+	    out = shellStream.read()
+	    print(out)
+	else:
+		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
 	subprocess = popen(command, stdout=PIPE, stderr=PIPE)
