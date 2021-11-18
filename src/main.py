@@ -22,7 +22,8 @@ def runTest(name, timeout_period):
 	sleep(timeout_period)
 	#output = subprocess.communicate()
 	os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
-	print(subprocess.stdout)
+	for line in subprocess.stdout:
+		print(line)
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
 	#out = shellStream.read()
 	#print(out)
