@@ -2,8 +2,8 @@
 # General
 #
 #
-CC=clang
-CXX=clang++
+CC=clang-4.0
+CXX=clang++-4.0
 
 SRC_DIR=../..
 
@@ -46,7 +46,8 @@ test: $(TARGET)
 	./$(TARGET) $(CORPUS) \
 	-artifact_prefix=$(OUTPUT) -print_final_stats=1 \
 	-detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
-	-runs=1000 -max_len=64 -death_mode=1
+	-runs=1000 -max_len=64 -death_mode=1 \
+	-seed=1
 
 .PHONY: tools
 tools:
