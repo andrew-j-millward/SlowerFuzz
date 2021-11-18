@@ -18,15 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid)
-	sleep(timeout_period)
-	#output = subprocess.communicate()
-	os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
-	for line in subprocess.stdout:
-		print(line)
-	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
-	#out = shellStream.read()
-	#print(out)
+	os.system("""./{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period))
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
