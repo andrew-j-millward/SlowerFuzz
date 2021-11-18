@@ -24,10 +24,8 @@ def runTest(name, timeout_period):
 	except TimeoutExpired:
 	    subpro.kill()
 	    out, err = subpro.communicate()
-	print(err.split('\n'))
-	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
-	#out = shellStream.read()
-	#print(out)
+	output = err.decode('utf-8').split('\n')
+	print(output)
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
