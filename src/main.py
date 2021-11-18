@@ -58,16 +58,11 @@ def refineSeedsLibFuzzer(range_dict, coverage):
         tmp_range_block = sorted(tmp_range_block)
         seed_ranges = [(lower, min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), upper))]
         for j in range(1,4):
-            print(seed_ranges[-1][1]+1)
-            print(tmp_range_block[i])
-            print(tmp_range_block[i+1])
             seed_ranges.append((max(lower, seed_ranges[-1][1]+1), min(math.ceil((tmp_range_block[j]+tmp_range_block[j+1])/2), upper)))
         seed_ranges.append((seed_ranges[-1][1]+1, upper))
         for i in range(len(tmp_range_block)):
             new_range_dict[tmp_range_block[i]] = seed_ranges[i]
-    print(optimal_seeds)
-    print(new_seeds)
-    print(new_range_dict)
+    return new_seeds, new_range_dict
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -116,12 +111,14 @@ if __name__ == '__main__':
                     shutil.rmtree('../' + tests[i] + '_tmp')
         elif args.path in tests:
             initializeEnv(args.path)
-            coverage = runTest(args.path, args.time, seeds)
-            refineSeedsLibFuzzer(range_dict, coverage)
+            for i in range(args.depth):
+                coverage = runTest(args.path, args.time, seeds)
+                seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
         elif args.path in debug_test:
             initializeEnv(args.path)
-            coverage = runTest(args.path, args.time, seeds)
-            refineSeedsLibFuzzer(range_dict, coverage)
+            for i in range(args.depth):
+                coverage = runTest(args.path, args.time, seeds)
+                seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
         #elif args.path == 'all':
         #    initializeEnv(args.path)
 
