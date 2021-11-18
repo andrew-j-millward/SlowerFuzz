@@ -7,7 +7,7 @@ sys.path.append('..woff')
 import argparse, random, math, os, shutil
 from subprocess import STDOUT, check_output, TimeoutExpired
 from time import sleep
-from subprocess import popen, PIPE
+from subprocess import Popen, PIPE
 
 def initializeEnv(name):
     shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
