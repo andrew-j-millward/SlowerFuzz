@@ -28,6 +28,19 @@ def runTest(name, timeout_period):
     f.write(strOutput)
     f.close()
 
+def runSlowFuzz(build, seeds):
+    seed_scores = []
+    for x in seeds:
+        os.system("""
+        ./driver corpus -artifact_prefix=out -print_final_stats=1 \
+        -detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
+        -runs=1000 -max_len=64 -death_node=1 \
+        -seed={0}
+        """.format(x))
+        score = 0 #will set to output
+        seed_scores.append((x, score))
+    return seed_scores
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -129,14 +142,20 @@ if __name__ == '__main__':
     else:
         print("Running using SlowFuzz build...")
         print("Using implementation at: ", args.build)
-
         os.chdir('../slowfuzz/apps/{0}/'.format(args.build))
         os.system('make fuzzer')
         os.system('make')
-        for x in seeds:
-            os.system("""
-            ./driver corpus -artifact_prefix=out -print_final_stats=1 \
-            -detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
-            -runs=1000 -max_len=64 -death_mode=1 \
-            -seed={0}
-            """.format(x))
+
+        seed_scores = runSlowFuzz(args.build, seeds)
+        
+        #prune seeds at rate determined by specified depth
+        #number of seeds to drop per round = args.seeds / (args.depth - 1)
+        #this will leave a final round of the best performing seeds
+        drops = args.seeds // (args.depth-1)
+        for _ in range(args.depth):
+            seed_scores.sort(key=lambda x: x[1])
+            seed_scores = seed_scores[drops:]
+            reduced_seeds = []
+            for x in seed_scores: reduced_seeds.append(x[0])
+            seed_scores = runSlowFuzz(args.build, reduced_seeds)
+            print("SCORES: ",seed_scores)
