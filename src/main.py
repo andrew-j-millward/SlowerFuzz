@@ -6,6 +6,8 @@ sys.path.append('..slowfuzz')
 sys.path.append('..woff')
 import argparse, random, math, os, shutil
 from subprocess import STDOUT, check_output, TimeoutExpired
+from time import sleep
+from subprocess import popen, PIPE
 
 def initializeEnv(name):
 	shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
@@ -13,18 +15,16 @@ def initializeEnv(name):
 	print(out)
 
 def runTest(name, timeout_period):
-	out = ''
-	try:
-	    out = check_output('../' + name + '_tmp/' + name + '-fsanitize_fuzzer', stderr = STDOUT, timeout = timeout_period)
-	    out_formatted = ''.join(map(chr, out))
-	    print(out_formatted)
-	except TimeoutExpired as e:
-	    print('Error: Time limit exceeded, terminated..')
-	    print(out)
-
-	f = open('report.txt','w')
-	f.write(strOutput)
-	f.close()
+	subprocess = popen(command, stdout=PIPE, stderr=PIPE)
+	for i in range(timeout_period):
+		sleep(1)
+		if p.poll() is not None:
+			break
+	output = subprocess.communicate()
+	subprocess.kill()
+	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
+	#out = shellStream.read()
+	#print(out)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
