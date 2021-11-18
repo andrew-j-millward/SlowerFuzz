@@ -65,6 +65,7 @@ if __name__ == '__main__':
         tests = ['boringssl-2016-02-12', 'c-ares-CVE-2016-5180', 'freetype2-2017', 'guetzli-2017-3-30', 'harfbuzz-1.3.2', 'json-2017-02-12', 'lcms-2017-03-21', 'libarchive-2017-01-04',
                  'libjpeg-turbo-07-2017', 'libpng-1.2.56', 'libssh-2017-1272', 'libxml2-v2.9.2', 'llvm-libcxxabi-2017-01-27', 'openssl-1.0.1f', 'openssl-1.0.2d', 'openssl-1.1.0c',
                  'openthread-2018-02-27', 'pcre2-10.00', 'proj4-2017-08-14', 're2-2014-12-09', 'sqlite-2016-11-14', 'vorbis-2017-12-11', 'woff2-2016-05-06', 'wpantund-2018-02-27']
+        debug_test = ['woff']
 
         # Initialize environment
         if args.path == 'clean':
@@ -72,55 +73,12 @@ if __name__ == '__main__':
             for i in range(len(tests)):
                 if os.path.isdir('../' + tests[i] + '_tmp'):
                     shutil.rmtree('../' + tests[i] + '_tmp')
-        elif args.path == 'boringssl-2016-02-12':
+        elif args.path in tests:
             initializeEnv(args.path)
             runTest(args.path, args.time)
-        elif args.path == 'c-ares-CVE-2016-5180':
-            initializeEnv(args.path)
-        elif args.path == 'freetype2-2017':
-            initializeEnv(args.path)
-        elif args.path == 'guetzli-2017-3-30':
-            initializeEnv(args.path)
-        elif args.path == 'harfbuzz-1.3.2':
-            initializeEnv(args.path)
-        elif args.path == 'json-2017-02-12':
-            initializeEnv(args.path)
-        elif args.path == 'lcms-2017-03-21':
-            initializeEnv(args.path)
-        elif args.path == 'libarchive-2017-01-04':
-            initializeEnv(args.path)
-        elif args.path == 'libjpeg-turbo-07-2017':
-            initializeEnv(args.path)
-        elif args.path == 'libpng-1.2.56':
-            initializeEnv(args.path)
-        elif args.path == 'libssh-2017-1272':
-            initializeEnv(args.path)
-        elif args.path == 'libxml2-v2.9.2':
-            initializeEnv(args.path)
-        elif args.path == 'llvm-libcxxabi-2017-01-27':
-            initializeEnv(args.path)
-        elif args.path == 'openssl-1.0.1f':
-            initializeEnv(args.path)
-        elif args.path == 'openssl-1.0.2d':
-            initializeEnv(args.path)
-        elif args.path == 'openssl-1.1.0c':
-            initializeEnv(args.path)
-        elif args.path == 'openthread-2018-02-27':
-            initializeEnv(args.path)
-        elif args.path == 'pcre2-10.00':
-            initializeEnv(args.path)
-        elif args.path == 'proj4-2017-08-14':
-            initializeEnv(args.path)
-        elif args.path == 're2-2014-12-09':
-            initializeEnv(args.path)
-        elif args.path == 'sqlite-2016-11-14':
-            initializeEnv(args.path)
-        elif args.path == 'vorbis-2017-12-11':
-            initializeEnv(args.path)
-        elif args.path == 'woff2-2016-05-06':
-            initializeEnv(args.path)
-        elif args.path == 'wpantund-2018-02-27':
-            initializeEnv(args.path)
+        elif args.path in debug_test:
+        	initializeEnv(args.path)
+        	runTest(args.path, args.time)
         elif args.path == 'all':
             initializeEnv(args.path)
 
