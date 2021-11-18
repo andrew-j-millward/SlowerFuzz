@@ -15,7 +15,7 @@ def initializeEnv(name):
 def runTest(name, timeout_period):
 	out = ''
 	try:
-	    out = check_output('./' + name + '_tmp/' + name + '-fsanitize_fuzzer', stderr = STDOUT, timeout = timeout_period)
+	    out = check_output('../' + name + '_tmp/' + name + '-fsanitize_fuzzer', stderr = STDOUT, timeout = timeout_period)
 	    out_formatted = ''.join(map(chr, out))
 	    print(out_formatted)
 	except TimeoutExpired as e:
