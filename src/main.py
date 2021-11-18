@@ -10,26 +10,26 @@ from time import sleep
 from subprocess import Popen, PIPE, run
 
 def initializeEnv(name):
-	if not os.path.isdir('../' + name + '_tmp'):
-	    shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
-	    out = shellStream.read()
-	    print(out)
-	else:
-		print('Environment already set up... Continuing...')
+    if not os.path.isdir('../' + name + '_tmp'):
+        shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
+        out = shellStream.read()
+        print(out)
+    else:
+        print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period, seeds=[1]):
-	coverage = {}
-	for i in range(len(seeds)):
-		subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
-		output = subpro.stderr.split('\n')
-		for j in range(len(output)):
-			if 'cov:' in output[-j-1]:
-				parsed1 = output[-j-1].split('cov: ')
-				parsed2 = parsed1[1].split(' ft:')
-				coverage[seeds[i]] = int(parsed2[0])
-				break
-	print(coverage)
-	return coverage
+    coverage = {}
+    for i in range(len(seeds)):
+        subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+        output = subpro.stderr.split('\n')
+        for j in range(len(output)):
+            if 'cov:' in output[-j-1]:
+                parsed1 = output[-j-1].split('cov: ')
+                parsed2 = parsed1[1].split(' ft:')
+                coverage[seeds[i]] = int(parsed2[0])
+                break
+    print(coverage)
+    return coverage
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
@@ -45,24 +45,24 @@ def runSlowFuzz(build, seeds):
     return seed_scores
 
 def refineSeedsLibFuzzer(range_dict, coverage):
-	optimal_seeds = sorted(coverage, key=coverage.get)[-5:]
-	new_seeds = []
-	range_dict = {}
-	for i in range(5):
-		tmp_range_block = []
-		for j in range(5):
-			new_seeds.append(random.randint(range_dict[optimal_seeds[i]][0], range_dict[optimal_seeds[i]][1]))
-			tmp_range_block.append(new_seeds[-1])
-		tmp_range_block = sorted(tmp_range_block)
-		seed_ranges = [(range_dict[optimal_seeds[i]][0], min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), range_dict[optimal_seeds[i]][1]))]
-	    for j in range(5):
-	        seed_ranges.append((max(range_dict[optimal_seeds[i]][0], seed_ranges[i-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), range_dict[optimal_seeds[i]][1])))
-	    seed_ranges.append((seed_ranges[-1][1]+1, range_dict[optimal_seeds[i]][1]))
-	    for i in range(len(tmp_range_block)):
-	    	range_dict[tmp_range_block[i]] = seed_ranges[i]
-	print(optimal_seeds)
-	print(new_seeds)
-	print(range_dict)
+    optimal_seeds = sorted(coverage, key=coverage.get)[-5:]
+    new_seeds = []
+    range_dict = {}
+    for i in range(5):
+        tmp_range_block = []
+        for j in range(5):
+            new_seeds.append(random.randint(range_dict[optimal_seeds[i]][0], range_dict[optimal_seeds[i]][1]))
+            tmp_range_block.append(new_seeds[-1])
+        tmp_range_block = sorted(tmp_range_block)
+        seed_ranges = [(range_dict[optimal_seeds[i]][0], min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), range_dict[optimal_seeds[i]][1]))]
+        for j in range(5):
+            seed_ranges.append((max(range_dict[optimal_seeds[i]][0], seed_ranges[i-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), range_dict[optimal_seeds[i]][1])))
+        seed_ranges.append((seed_ranges[-1][1]+1, range_dict[optimal_seeds[i]][1]))
+        for i in range(len(tmp_range_block)):
+            range_dict[tmp_range_block[i]] = seed_ranges[i]
+    print(optimal_seeds)
+    print(new_seeds)
+    print(range_dict)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -114,9 +114,9 @@ if __name__ == '__main__':
             coverage = runTest(args.path, args.time, seeds)
             refineSeedsLibFuzzer(range_dict, coverage)
         elif args.path in debug_test:
-        	initializeEnv(args.path)
-        	coverage = runTest(args.path, args.time, seeds)
-        	refineSeedsLibFuzzer(range_dict, coverage)
+            initializeEnv(args.path)
+            coverage = runTest(args.path, args.time, seeds)
+            refineSeedsLibFuzzer(range_dict, coverage)
         #elif args.path == 'all':
         #    initializeEnv(args.path)
 
