@@ -6,6 +6,12 @@ sys.path.append('..slowfuzz')
 sys.path.append('..woff')
 import argparse, random, math, os, shutil
 
+def initializeEnv(name):
+	shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
+	out = shellStream.read()
+	print(out)
+
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
 		description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -47,57 +53,55 @@ if __name__ == '__main__':
 				if os.path.isdir('../' + tests[i] + '_tmp'):
 					shutil.rmtree('../' + tests[i] + '_tmp')
 		elif args.path == 'boringssl-2016-02-12':
-			stream = os.popen('sh libFuzzerSetup/setup_' + args.path + '.sh')
-			output = stream.read()
-			print(output)
+			initializeEnv(args.path)
 		elif args.path == 'c-ares-CVE-2016-5180':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'freetype2-2017':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'guetzli-2017-3-30':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'harfbuzz-1.3.2':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'json-2017-02-12':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'lcms-2017-03-21':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'libarchive-2017-01-04':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'libjpeg-turbo-07-2017':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'libpng-1.2.56':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'libssh-2017-1272':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'libxml2-v2.9.2':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'llvm-libcxxabi-2017-01-27':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'openssl-1.0.1f':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'openssl-1.0.2d':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'openssl-1.1.0c':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'openthread-2018-02-27':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'pcre2-10.00':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'proj4-2017-08-14':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 're2-2014-12-09':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'sqlite-2016-11-14':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'vorbis-2017-12-11':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'woff2-2016-05-06':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'wpantund-2018-02-27':
-			pass
+			initializeEnv(args.path)
 		elif args.path == 'all':
-			pass
+			initializeEnv(args.path)
 
 		# Perform eliminations
 		for i in range(args.depth):
