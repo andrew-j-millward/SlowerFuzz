@@ -99,7 +99,7 @@ if __name__ == '__main__':
             refineSeedsLibFuzzer(range_dict, coverage)
         elif args.path in debug_test:
         	initializeEnv(args.path)
-        	runTest(args.path, args.time, seeds)
+        	coverage = runTest(args.path, args.time, seeds)
         	refineSeedsLibFuzzer(range_dict, coverage)
         #elif args.path == 'all':
         #    initializeEnv(args.path)
