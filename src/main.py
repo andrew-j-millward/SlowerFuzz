@@ -44,6 +44,9 @@ def runSlowFuzz(build, seeds):
         seed_scores.append((x, score))
     return seed_scores
 
+def refineSeeds():
+	pass
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -68,7 +71,8 @@ if __name__ == '__main__':
     seed_ranges = [(0, min(math.ceil((seeds[0]+seeds[1])/2),9999999999))]
     for i in range(1, len(seeds)-1):
         seed_ranges.append((max(0, seed_ranges[i-1][1]+1), min(math.ceil((seeds[i]+seeds[i+1])/2),9999999999)))
-    print(seeds, seed_ranges)
+    range_dict = {seeds[i]:seed_ranges[i] for i in range(len(seeds))}
+    print(seeds, seed_ranges, range_dict)
 
     # If we are testing on libFuzzer instead of slowFuzz directly...
     if args.libfuzzer:
