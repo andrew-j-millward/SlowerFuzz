@@ -18,9 +18,14 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	output = os.popen("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period)).read()
-	print("\n\n\n\n")
+	subprocess = Popen(("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period)).split(' '), stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid)
+	sleep(timeout_period)
+	output = subprocess.communicate()
+	os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
 	print(output)
+	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
+	#out = shellStream.read()
+	#print(out)
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
@@ -40,7 +45,7 @@ if __name__ == '__main__':
         description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-d', '--depth', type=int, metavar='', help='Number of elimination rounds',
                         default=10)
-    parser.add_argument('-t', '--timeout', type=int, metavar='', help='Maximum depth before timing out each run and scoring it',
+    parser.add_argument('-t', '--time', type=int, metavar='', help='Maximum time per exploration before analyzing the results',
                         default=10)
     parser.add_argument('-s', '--seeds', type=int, metavar='', help='Number of seeds per elimination round',
                         default=25)
@@ -80,10 +85,10 @@ if __name__ == '__main__':
                     shutil.rmtree('../' + tests[i] + '_tmp')
         elif args.path in tests:
             initializeEnv(args.path)
-            runTest(args.path, args.timeout)
+            runTest(args.path, args.time)
         elif args.path in debug_test:
         	initializeEnv(args.path)
-        	runTest(args.path, args.timeout)
+        	runTest(args.path, args.time)
         elif args.path == 'all':
             initializeEnv(args.path)
 
