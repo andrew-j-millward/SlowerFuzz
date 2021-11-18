@@ -7,7 +7,7 @@ sys.path.append('..woff')
 import argparse, random, math, os, shutil, signal
 from subprocess import STDOUT, check_output, TimeoutExpired
 from time import sleep
-from subprocess import Popen, PIPE
+from subprocess import run, PIPE
 
 def initializeEnv(name):
 	if not os.path.isdir('../' + name + '_tmp'):
@@ -18,7 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid)
+	subprocess = run(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid)
 	sleep(timeout_period)
 	#output = subprocess.communicate()
 	os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
