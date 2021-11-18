@@ -18,10 +18,10 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period, seeds=[1]):
+	coverage = {}
 	for i in range(len(seeds)):
 		subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
 		output = subpro.stderr.split('\n')
-		coverage = {}
 		for j in range(len(output)):
 			if 'cov:' in output[-j-1]:
 				parsed1 = output[-j-1].split('cov: ')
