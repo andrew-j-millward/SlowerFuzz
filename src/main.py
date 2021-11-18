@@ -119,9 +119,9 @@ if __name__ == '__main__':
                 coverage_records = {**coverage_records, **coverage}
                 seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
             optimal_seed = max(coverage_records, key=coverage_records.get)
-            print(f"Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
+            print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
             coverage = runTest(args.path, args.explorationdepth, seeds=[optimal_seed])
-            print(f"Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
+            print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
                     args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
         elif args.path in debug_test:
             initializeEnv(args.path)
@@ -130,9 +130,9 @@ if __name__ == '__main__':
                 coverage_records = {**coverage_records, **coverage}
                 seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
             optimal_seed = max(coverage_records, key=coverage_records.get)
-            print(f"Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
+            print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
             coverage = runTest(args.path, args.explorationdepth, seeds=[optimal_seed])
-            print(f"Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
+            print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
                     args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
         #elif args.path == 'all':
         #    initializeEnv(args.path)
