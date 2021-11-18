@@ -18,7 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer'], stdout=PIPE, shell=True)
+	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer'], stdout=PIPE)
 	try:
 		(out, err) = subpro.communicate(timeout=timeout_period)
 	except TimeoutExpired:
