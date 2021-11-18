@@ -17,7 +17,7 @@ def initializeEnv(name):
 	else:
 		print('Environment already set up... Continuing...')
 
-def runTest(name, timeout_period):
+def runTest(name, timeout_period, seeds=[1]):
 	#subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer', '-seed=0'], stdout=PIPE, stderr=PIPE)
 	#print("the commandline is {}".format(subpro.args))
 	#try:
@@ -32,14 +32,18 @@ def runTest(name, timeout_period):
 	#		parsed2 = parsed1[1].split(' ft:')
 	#		print(int(parsed2[0]))
 	#		break
-	subpro = run('../' + name + '_tmp/' + name + '-fsanitize_fuzzer -seed=0 -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
-	output = subpro.stderr.split('\n')
-	for i in range(len(output)):
-		if 'cov:' in output[-i-1]:
-			parsed1 = output[-i-1].split('cov: ')
-			parsed2 = parsed1[1].split(' ft:')
-			print(int(parsed2[0]))
-			break
+	for i in range(len(seeds)):
+		subpro = run('../' + name + '_tmp/' + name + '-fsanitize_fuzzer -seed=' + seeds[i] + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+		output = subpro.stderr.split('\n')
+		coverage = {}
+		for j in range(len(output)):
+			if 'cov:' in output[-j-1]:
+				parsed1 = output[-j-1].split('cov: ')
+				parsed2 = parsed1[1].split(' ft:')
+				coverage[seeds[i]] = int(parsed2[0])
+				break
+	print(coverage)
+	return coverage
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
