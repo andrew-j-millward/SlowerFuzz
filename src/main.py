@@ -44,7 +44,8 @@ if __name__ == '__main__':
 		if args.path == 'clean':
 			print('Reset branch triggered... Removing all testing environments')
 			for i in range(len(tests)):
-				shutil.rmtree('../' + tests[i] + '_tmp')
+				if os.path.isdir('../' + tests[i] + '_tmp'):
+					shutil.rmtree('../' + tests[i] + '_tmp')
 		elif args.path == 'boringssl-2016-02-12':
 			stream = os.popen('sh libFuzzerSetup/setup_' + args.path + '.sh')
 			output = stream.read()
