@@ -27,10 +27,10 @@ def runTest(name, timeout_period):
 	output = err.decode('utf-8').split('\n')
 	for i in range(len(output)):
 		if 'cov:' in output[-i-1]:
-			parsed = output[-i-1].split('cov: ')
-			print(parsed)
+			parsed1 = output[-i-1].split('cov: ')
+			parsed2 = parsed1[1].split(' ft:')
+			print(parsed2)
 			break
-	print(output)
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
