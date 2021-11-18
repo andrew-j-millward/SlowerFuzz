@@ -41,7 +41,11 @@ if __name__ == '__main__':
 				 'openthread-2018-02-27', 'pcre2-10.00', 'proj4-2017-08-14', 're2-2014-12-09', 'sqlite-2016-11-14', 'vorbis-2017-12-11', 'woff2-2016-05-06', 'wpantund-2018-02-27']
 
 		# Initialize environment
-		if args.path == 'boringssl-2016-02-12':
+		if args.path == 'clean':
+			print('Reset branch triggered... Removing all testing environments')
+			for i in range(len(tests)):
+				shutil.rmtree('../' + tests[i] + '_tmp')
+		elif args.path == 'boringssl-2016-02-12':
 			stream = os.popen('sh libFuzzerSetup/setup_' + args.path + '.sh')
 			output = stream.read()
 			print(output)
@@ -93,10 +97,6 @@ if __name__ == '__main__':
 			pass
 		elif args.path == 'all':
 			pass
-		elif args.path == 'clean':
-			print('Reset branch triggered... Removing all testing environments')
-			for i in range(len(tests)):
-				shutil.rmtree('../' + tests[i] + '_tmp')
 
 		# Perform eliminations
 		for i in range(args.depth):
