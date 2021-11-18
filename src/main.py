@@ -5,7 +5,7 @@ sys.path.append('..fuzzing')
 sys.path.append('..slowfuzz')
 sys.path.append('..woff')
 import argparse, random, math, os, shutil, signal
-from subprocess import STDOUT, check_output, TimeoutExpired
+from subprocess import STDOUT, TimeoutExpired
 from time import sleep
 from subprocess import Popen, PIPE
 
@@ -18,14 +18,16 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer'], stdout=PIPE)
+	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer'], stdout=PIPE, stderr=PIPE)
 	try:
-		(out, err) = subpro.communicate(timeout=timeout_period)
+		out, err = subpro.communicate(timeout=timeout_period)
 	except TimeoutExpired:
 	    subpro.kill()
-	    (out, err) = subpro.communicate()
+	    out, err = subpro.communicate()
 	#os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
 	print(out)
+	print("AAAA")
+	print(out, err)
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
 	#out = shellStream.read()
 	#print(out)
