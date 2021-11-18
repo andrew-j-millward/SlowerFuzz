@@ -18,20 +18,6 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period, seeds=[1]):
-	#subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer', '-seed=0'], stdout=PIPE, stderr=PIPE)
-	#print("the commandline is {}".format(subpro.args))
-	#try:
-	#	out, err = subpro.communicate(timeout=timeout_period)
-	#except TimeoutExpired:
-	#    subpro.kill()
-	#    out, err = subpro.communicate()
-	#output = err.decode('utf-8').split('\n')
-	#for i in range(len(output)):
-	#	if 'cov:' in output[-i-1]:
-	#		parsed1 = output[-i-1].split('cov: ')
-	#		parsed2 = parsed1[1].split(' ft:')
-	#		print(int(parsed2[0]))
-	#		break
 	for i in range(len(seeds)):
 		subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
 		output = subpro.stderr.split('\n')
@@ -103,12 +89,12 @@ if __name__ == '__main__':
                     shutil.rmtree('../' + tests[i] + '_tmp')
         elif args.path in tests:
             initializeEnv(args.path)
-            runTest(args.path, args.time)
+            runTest(args.path, args.time, seeds)
         elif args.path in debug_test:
         	initializeEnv(args.path)
-        	runTest(args.path, args.time)
-        elif args.path == 'all':
-            initializeEnv(args.path)
+        	runTest(args.path, args.time, seeds)
+        #elif args.path == 'all':
+        #    initializeEnv(args.path)
 
         # Perform eliminations
         for i in range(args.depth):
