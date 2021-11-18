@@ -4,7 +4,7 @@ sys.path.append('..FTS')
 sys.path.append('..fuzzing')
 sys.path.append('..slowfuzz')
 sys.path.append('..woff')
-import argparse, random, math, os, shutil
+import argparse, random, math, os, shutil, signal
 from subprocess import STDOUT, check_output, TimeoutExpired
 from time import sleep
 from subprocess import Popen, PIPE
@@ -20,9 +20,9 @@ def initializeEnv(name):
 def runTest(name, timeout_period):
 	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid)
 	sleep(timeout_period)
-	output = subprocess.communicate()
-	os.killpg(os.getpgid(server.pid), signal.SIGTERM)
-	print(output)
+	#output = subprocess.communicate()
+	os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
+	print(subprocess)
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
 	#out = shellStream.read()
 	#print(out)
