@@ -44,8 +44,9 @@ def runSlowFuzz(build, seeds):
         seed_scores.append((x, score))
     return seed_scores
 
-def refineSeeds():
-	pass
+def refineSeedsLibFuzzer(range_dict, coverage):
+	seeds_sorted = sorted(coverage, key=coverage.get)
+	print(seeds_sorted)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -95,9 +96,11 @@ if __name__ == '__main__':
         elif args.path in tests:
             initializeEnv(args.path)
             runTest(args.path, args.time, seeds)
+            refineSeedsLibFuzzer(range_dict, coverage)
         elif args.path in debug_test:
         	initializeEnv(args.path)
         	runTest(args.path, args.time, seeds)
+        	refineSeedsLibFuzzer(range_dict, coverage)
         #elif args.path == 'all':
         #    initializeEnv(args.path)
 
