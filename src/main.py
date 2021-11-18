@@ -7,7 +7,7 @@ sys.path.append('..woff')
 import argparse, random, math, os, shutil, signal
 from subprocess import STDOUT, TimeoutExpired
 from time import sleep
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, run
 
 def initializeEnv(name):
 	if not os.path.isdir('../' + name + '_tmp'):
@@ -18,20 +18,22 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer', '-seed=0'], stdout=PIPE, stderr=PIPE)
-	print("the commandline is {}".format(subpro.args))
-	try:
-		out, err = subpro.communicate(timeout=timeout_period)
-	except TimeoutExpired:
-	    subpro.kill()
-	    out, err = subpro.communicate()
-	output = err.decode('utf-8').split('\n')
-	for i in range(len(output)):
-		if 'cov:' in output[-i-1]:
-			parsed1 = output[-i-1].split('cov: ')
-			parsed2 = parsed1[1].split(' ft:')
-			print(int(parsed2[0]))
-			break
+	#subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer', '-seed=0'], stdout=PIPE, stderr=PIPE)
+	#print("the commandline is {}".format(subpro.args))
+	#try:
+	#	out, err = subpro.communicate(timeout=timeout_period)
+	#except TimeoutExpired:
+	#    subpro.kill()
+	#    out, err = subpro.communicate()
+	#output = err.decode('utf-8').split('\n')
+	#for i in range(len(output)):
+	#	if 'cov:' in output[-i-1]:
+	#		parsed1 = output[-i-1].split('cov: ')
+	#		parsed2 = parsed1[1].split(' ft:')
+	#		print(int(parsed2[0]))
+	#		break
+	subpro = run('../' + name + '_tmp/' + name + '-fsanitize_fuzzer -seed=0 -runs=100', stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+	print(subpro.stdout)
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
