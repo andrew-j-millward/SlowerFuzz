@@ -117,6 +117,7 @@ if __name__ == '__main__':
                 coverage_records = {**coverage_records, **coverage}
                 seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
             print(coverage_records)
+            print(max(coverage_records, key=coverage_records.get))
         elif args.path in debug_test:
             initializeEnv(args.path)
             for i in range(args.depth):
@@ -124,6 +125,7 @@ if __name__ == '__main__':
                 coverage_records = {**coverage_records, **coverage}
                 seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
             print(coverage_records)
+            print(max(coverage_records, key=coverage_records.get))
         #elif args.path == 'all':
         #    initializeEnv(args.path)
 
