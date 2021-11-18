@@ -4,7 +4,7 @@ sys.path.append('..FTS')
 sys.path.append('..fuzzing')
 sys.path.append('..slowfuzz')
 sys.path.append('..woff')
-import argparse, random, math, os
+import argparse, random, math, os, shutil
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
@@ -92,7 +92,11 @@ if __name__ == '__main__':
 		elif args.path == 'wpantund-2018-02-27':
 			pass
 		elif args.path == 'all':
-			pass		
+			pass
+		else:
+			print('Reset branch triggered... Removing all testing environments')
+			for i in range(len(tests)):
+				shutil.rmtree('../' + tests[i] + '_tmp')
 
 		# Perform eliminations
 		for i in range(args.depth):
