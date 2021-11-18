@@ -71,6 +71,7 @@ if __name__ == '__main__':
     seed_ranges = [(0, min(math.ceil((seeds[0]+seeds[1])/2),9999999999))]
     for i in range(1, len(seeds)-1):
         seed_ranges.append((max(0, seed_ranges[i-1][1]+1), min(math.ceil((seeds[i]+seeds[i+1])/2),9999999999)))
+    seed_ranges.append((seed_ranges[-1][1]+1, 9999999999))
     range_dict = {seeds[i]:seed_ranges[i] for i in range(len(seeds))}
     print(seeds, seed_ranges, range_dict)
 
