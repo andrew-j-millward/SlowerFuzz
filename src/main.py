@@ -18,7 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer'], stdout=PIPE, stderr=PIPE)
+	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer', '-seed=0'], stdout=PIPE, stderr=PIPE)
 	try:
 		out, err = subpro.communicate(timeout=timeout_period)
 	except TimeoutExpired:
@@ -29,7 +29,7 @@ def runTest(name, timeout_period):
 		if 'cov:' in output[-i-1]:
 			parsed1 = output[-i-1].split('cov: ')
 			parsed2 = parsed1[1].split(' ft:')
-			print(parsed2)
+			print(int(parsed2[0]))
 			break
 
 def runSlowFuzz(build, seeds):
