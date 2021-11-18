@@ -18,7 +18,9 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	os.system("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period))
+	output = os.popen("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period)).read()
+	print("\n\n\n\n")
+	print(output)
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
@@ -38,7 +40,7 @@ if __name__ == '__main__':
         description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-d', '--depth', type=int, metavar='', help='Number of elimination rounds',
                         default=10)
-    parser.add_argument('-t', '--time', type=int, metavar='', help='Maximum time per exploration before analyzing the results',
+    parser.add_argument('-t', '--timeout', type=int, metavar='', help='Maximum depth before timing out each run and scoring it',
                         default=10)
     parser.add_argument('-s', '--seeds', type=int, metavar='', help='Number of seeds per elimination round',
                         default=25)
