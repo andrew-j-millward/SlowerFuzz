@@ -18,7 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	os.system("""./{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period))
+	os.system("""../{0}_tmp/{0}-fsanitize_fuzzer -runs={1}""".format(name, timeout_period))
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
