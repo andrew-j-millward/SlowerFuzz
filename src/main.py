@@ -93,7 +93,7 @@ if __name__ == '__main__':
 			pass
 		elif args.path == 'all':
 			pass
-		else:
+		elif args.path == 'clean':
 			print('Reset branch triggered... Removing all testing environments')
 			for i in range(len(tests)):
 				shutil.rmtree('../' + tests[i] + '_tmp')
