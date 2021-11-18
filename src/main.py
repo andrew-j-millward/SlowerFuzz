@@ -47,7 +47,7 @@ def runSlowFuzz(build, seeds):
 def refineSeedsLibFuzzer(range_dict, coverage):
     optimal_seeds = sorted(coverage, key=coverage.get)[-5:]
     new_seeds = []
-    range_dict = {}
+    new_range_dict = {}
     for i in range(5):
         tmp_range_block = []
         for j in range(5):
@@ -59,10 +59,10 @@ def refineSeedsLibFuzzer(range_dict, coverage):
             seed_ranges.append((max(range_dict[optimal_seeds[i]][0], seed_ranges[i-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), range_dict[optimal_seeds[i]][1])))
         seed_ranges.append((seed_ranges[-1][1]+1, range_dict[optimal_seeds[i]][1]))
         for i in range(len(tmp_range_block)):
-            range_dict[tmp_range_block[i]] = seed_ranges[i]
+            new_range_dict[tmp_range_block[i]] = seed_ranges[i]
     print(optimal_seeds)
     print(new_seeds)
-    print(range_dict)
+    print(new_range_dict)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
