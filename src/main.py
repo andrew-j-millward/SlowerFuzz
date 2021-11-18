@@ -21,7 +21,7 @@ def runTest(name, timeout_period):
 	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE)
 	for i in range(timeout_period):
 		sleep(1)
-		if p.poll() is not None:
+		if subprocess.poll() is not None:
 			break
 	output = subprocess.communicate()
 	subprocess.kill()
