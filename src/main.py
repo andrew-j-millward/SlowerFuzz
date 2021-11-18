@@ -140,5 +140,3 @@ if __name__ == '__main__':
             -runs=1000 -max_len=64 -death_mode=1 \
             -seed={0}
             """.format(x))
-        
-

@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf libarchive-2017-01-04_tmp;
 mkdir -p libarchive-2017-01-04_tmp;
 cd libarchive-2017-01-04_tmp;

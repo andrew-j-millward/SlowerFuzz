@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf openthread-2018-02-27_tmp;
 mkdir -p openthread-2018-02-27_tmp;
 cd openthread-2018-02-27_tmp;

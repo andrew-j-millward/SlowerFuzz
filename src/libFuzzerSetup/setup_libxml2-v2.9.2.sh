@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf libxml2-v2.9.2_tmp;
 mkdir -p libxml2-v2.9.2_tmp;
 cd libxml2-v2.9.2_tmp;

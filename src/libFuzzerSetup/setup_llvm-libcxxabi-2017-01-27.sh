@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf llvm-libcxxabi-2017-01-27_tmp;
 mkdir -p llvm-libcxxabi-2017-01-27_tmp;
 cd llvm-libcxxabi-2017-01-27_tmp;

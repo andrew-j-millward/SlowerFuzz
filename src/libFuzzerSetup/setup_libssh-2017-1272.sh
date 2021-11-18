@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf libssh-2017-1272_tmp;
 mkdir -p libssh-2017-1272_tmp;
 cd libssh-2017-1272_tmp;

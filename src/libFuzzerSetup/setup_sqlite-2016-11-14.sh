@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf sqlite-2016-11-14_tmp;
 mkdir -p sqlite-2016-11-14_tmp;
 cd sqlite-2016-11-14_tmp;

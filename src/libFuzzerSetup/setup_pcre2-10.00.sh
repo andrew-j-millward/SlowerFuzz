@@ -1,5 +1,5 @@
 # Create temp directory
-cd ../../;
+cd ../;
 rm -rf pcre2-10.00_tmp;
 mkdir -p pcre2-10.00_tmp;
 cd pcre2-10.00_tmp;
