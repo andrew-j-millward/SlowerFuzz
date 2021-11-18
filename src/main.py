@@ -47,10 +47,22 @@ def runSlowFuzz(build, seeds):
 def refineSeedsLibFuzzer(range_dict, coverage):
 	optimal_seeds = sorted(coverage, key=coverage.get)[-5:]
 	new_seeds = []
+	range_dict = {}
 	for i in range(5):
+		tmp_range_block = []
 		for j in range(5):
 			new_seeds.append(random.randint(range_dict[optimal_seeds[i]][0], range_dict[optimal_seeds[i]][1]))
+			tmp_range_block.append(new_seeds[-1])
+		tmp_range_block = sorted(tmp_range_block)
+		seed_ranges = [(range_dict[optimal_seeds[i]][0], min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), range_dict[optimal_seeds[i]][1]))]
+	    for j in range(5):
+	        seed_ranges.append((max(range_dict[optimal_seeds[i]][0], seed_ranges[i-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), range_dict[optimal_seeds[i]][1])))
+	    seed_ranges.append((seed_ranges[-1][1]+1, range_dict[optimal_seeds[i]][1]))
+	    for i in range(len(tmp_range_block)):
+	    	range_dict[tmp_range_block[i]] = seed_ranges[i]
 	print(optimal_seeds)
+	print(new_seeds)
+	print(range_dict)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -72,10 +84,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Generate initial seeds
-    seeds = sorted([random.randint(0,9999999999) for i in range(args.seeds)])
-    seed_ranges = [(0, min(math.ceil((seeds[0]+seeds[1])/2),9999999999))]
+    seeds = sorted([random.randint(1,9999999999) for i in range(args.seeds)])
+    seed_ranges = [(1, min(math.ceil((seeds[0]+seeds[1])/2),9999999999))]
     for i in range(1, len(seeds)-1):
-        seed_ranges.append((max(0, seed_ranges[i-1][1]+1), min(math.ceil((seeds[i]+seeds[i+1])/2),9999999999)))
+        seed_ranges.append((max(1, seed_ranges[i-1][1]+1), min(math.ceil((seeds[i]+seeds[i+1])/2),9999999999)))
     seed_ranges.append((seed_ranges[-1][1]+1, 9999999999))
     range_dict = {seeds[i]:seed_ranges[i] for i in range(len(seeds))}
     print(seeds, seed_ranges, range_dict)
