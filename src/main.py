@@ -32,8 +32,14 @@ def runTest(name, timeout_period):
 	#		parsed2 = parsed1[1].split(' ft:')
 	#		print(int(parsed2[0]))
 	#		break
-	subpro = run('../' + name + '_tmp/' + name + '-fsanitize_fuzzer -seed=0 -runs=100', stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
-	print(subpro.stdout)
+	subpro = run('../' + name + '_tmp/' + name + '-fsanitize_fuzzer -seed=0 -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+	output = subpro.stderr.split('\n')
+	for i in range(len(output)):
+		if 'cov:' in output[-i-1]:
+			parsed1 = output[-i-1].split('cov: ')
+			parsed2 = parsed1[1].split(' ft:')
+			print(int(parsed2[0]))
+			break
 
 def runSlowFuzz(build, seeds):
     seed_scores = []
@@ -53,8 +59,8 @@ if __name__ == '__main__':
         description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-d', '--depth', type=int, metavar='', help='Number of elimination rounds',
                         default=10)
-    parser.add_argument('-t', '--time', type=int, metavar='', help='Maximum time per exploration before analyzing the results',
-                        default=10)
+    parser.add_argument('-t', '--time', type=int, metavar='', help='Maximum exploration steps before analyzing the results',
+                        default=1000)
     parser.add_argument('-s', '--seeds', type=int, metavar='', help='Number of seeds per elimination round',
                         default=25)
     parser.add_argument('-c', '--carryOver', type=int, metavar='', help='Number of seed ranges to carry over to the next round',
