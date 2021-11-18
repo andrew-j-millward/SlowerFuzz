@@ -25,6 +25,11 @@ def runTest(name, timeout_period):
 	    subpro.kill()
 	    out, err = subpro.communicate()
 	output = err.decode('utf-8').split('\n')
+	for i in range(len(output)):
+		if 'cov:' in output[-i-1]:
+			parsed = output[-i-1].split('cov: ')
+			print(parsed)
+			break
 	print(output)
 
 def runSlowFuzz(build, seeds):
