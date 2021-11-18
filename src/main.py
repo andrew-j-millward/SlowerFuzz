@@ -19,7 +19,11 @@ def initializeEnv(name):
 
 def runTest(name, timeout_period):
 	subpro = Popen(['../' + name + '_tmp/' + name + '-fsanitize_fuzzer'], stdout=PIPE, shell=True)
-	(out, err) = subpro.communicate(timeout=timeout_period)
+	try:
+		(out, err) = subpro.communicate(timeout=timeout_period)
+	except TimeoutExpired:
+	    subpro.kill()
+	    (out, err) = subpro.communicate()
 	#os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
 	print(out)
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
