@@ -18,7 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subprocess = Popen(command, stdout=PIPE, stderr=PIPE)
+	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE)
 	for i in range(timeout_period):
 		sleep(1)
 		if p.poll() is not None:
