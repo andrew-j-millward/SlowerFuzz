@@ -61,7 +61,7 @@ def refineSeedsLibFuzzer(range_dict, coverage):
             print(seed_ranges[-1][1]+1)
             print(tmp_range_block[i])
             print(tmp_range_block[i+1])
-            seed_ranges.append((max(lower, seed_ranges[-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), upper)))
+            seed_ranges.append((max(lower, seed_ranges[-1][1]+1), min(math.ceil((tmp_range_block[j]+tmp_range_block[j+1])/2), upper)))
         seed_ranges.append((seed_ranges[-1][1]+1, upper))
         for i in range(len(tmp_range_block)):
             new_range_dict[tmp_range_block[i]] = seed_ranges[i]
