@@ -18,7 +18,7 @@ def initializeEnv(name):
 		print('Environment already set up... Continuing...')
 
 def runTest(name, timeout_period):
-	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE)
+	subprocess = Popen(['./runLibFuzzer.sh', name], stdout=PIPE, stderr=PIPE, preexec_fn=os.setsid)
 	sleep(timeout_period)
 	output = subprocess.communicate()
 	os.killpg(os.getpgid(server.pid), signal.SIGTERM)
