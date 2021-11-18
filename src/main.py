@@ -50,14 +50,16 @@ def refineSeedsLibFuzzer(range_dict, coverage):
     new_range_dict = {}
     for i in range(5):
         tmp_range_block = []
+        lower = range_dict[optimal_seeds[i]][0]
+        upper = range_dict[optimal_seeds[i]][1]
         for j in range(5):
-            new_seeds.append(random.randint(range_dict[optimal_seeds[i]][0], range_dict[optimal_seeds[i]][1]))
+            new_seeds.append(random.randint(lower, upper))
             tmp_range_block.append(new_seeds[-1])
         tmp_range_block = sorted(tmp_range_block)
-        seed_ranges = [(range_dict[optimal_seeds[i]][0], min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), range_dict[optimal_seeds[i]][1]))]
+        seed_ranges = [(lower, min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), upper))]
         for j in range(1,4):
-            seed_ranges.append((max(range_dict[optimal_seeds[i]][0], seed_ranges[i-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), range_dict[optimal_seeds[i]][1])))
-        seed_ranges.append((seed_ranges[-1][1]+1, range_dict[optimal_seeds[i]][1]))
+            seed_ranges.append((max(lower, seed_ranges[i-1][1]+1), min(math.ceil((tmp_range_block[i]+tmp_range_block[i+1])/2), upper)))
+        seed_ranges.append((seed_ranges[-1][1]+1, upper))
         for i in range(len(tmp_range_block)):
             new_range_dict[tmp_range_block[i]] = seed_ranges[i]
     print(optimal_seeds)
