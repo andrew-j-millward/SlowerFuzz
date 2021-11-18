@@ -25,6 +25,7 @@ def runTest(name, timeout_period):
 			break
 	output = subprocess.communicate()
 	subprocess.kill()
+	print(output)
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
 	#out = shellStream.read()
 	#print(out)
