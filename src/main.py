@@ -24,10 +24,7 @@ def runTest(name, timeout_period):
 	except TimeoutExpired:
 	    subpro.kill()
 	    out, err = subpro.communicate()
-	#os.killpg(os.getpgid(subprocess.pid), signal.SIGTERM)
-	print(out)
-	print("AAAA")
-	print(out, err)
+	print(err.split('\n'))
 	#shellStream = os.popen('sh runLibFuzzer.sh ' + name)
 	#out = shellStream.read()
 	#print(out)
