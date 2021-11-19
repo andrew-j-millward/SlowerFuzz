@@ -32,17 +32,44 @@ def runTest(name, timeout_period, seeds=[1]):
     return coverage
 
 def runSlowFuzz(build, seeds):
-    seed_scores = []
-    for x in seeds:
-        os.system("""
+    seed_scores = {}
+    for x in seeds.keys():
+        output = run("""
         ./driver corpus -artifact_prefix=out -print_final_stats=1 \
         -detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
         -runs=1000 -max_len=64 -death_node=1 \
         -seed={0}
-        """.format(x))
-        score = 0 #will set to output
-        seed_scores.append((x, score))
+        """.format(x),stdout=PIPE, stderr=PIPE,shell=True,universal_newlines=True)
+        output = output.stderr.split('\n')
+        for l in output:
+            if 'cov' in l:
+                cov = l.split('cov: ')[1].split(' ft:')[1].split()
+                seed_scores[x] = int(cov[0])
+                break
+    print(seed_scores)
     return seed_scores
+
+def generateSeedsSlowFuzz(orig_seeds, ranges):
+    new_seeds = []
+    new_range_dict = {}
+    for i in range(5):
+        tmp_range_block = []
+        lower = ranges[orig_seeds[i]][0]
+        upper = ranges[orig_seeds[i]][1]
+        for j in range(5):
+            new_seed =random.randint(lower, upper)
+            new_seeds.append(new_seed)
+            tmp_range_block.append(new_seed)
+        tmp_range_block = sorted(tmp_range_block)
+        seed_ranges = [(lower, min(math.ceil((tmp_range_block[0]+tmp_range_block[1])/2), upper))]
+        for j in range(1,4):
+            seed_ranges.append((max(lower, seed_ranges[-1][1]+1), min(math.ceil((tmp_range_block[j]+tmp_range_block[j+1])/2), upper)))
+        seed_ranges.append((seed_ranges[-1][1]+1, upper))
+        for i in range(len(tmp_range_block)):
+            new_range_dict[tmp_range_block[i]] = seed_ranges[i]
+    seed_dict = {}
+    for x in new_seeds: seed_dict[x] = 0
+    return seed_dict, new_range_dict
 
 def refineSeedsLibFuzzer(range_dict, coverage):
     optimal_seeds = sorted(coverage, key=coverage.get)[-5:]
@@ -134,12 +161,8 @@ if __name__ == '__main__':
             coverage = runTest(args.path, args.explorationdepth, seeds=[optimal_seed])
             print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
                     args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
-        #elif args.path == 'all':
-        #    initializeEnv(args.path)
+        
 
-        # Perform eliminations
-        for i in range(args.depth):
-            pass
     #slowfuzz build
     else:
         print("Running using SlowFuzz build...")
@@ -147,17 +170,15 @@ if __name__ == '__main__':
         os.chdir('../slowfuzz/apps/{0}/'.format(args.build))
         os.system('make fuzzer')
         os.system('make')
-
-        seed_scores = runSlowFuzz(args.build, seeds)
+        optimal_seeds = {}
+        for x in seeds: optimal_seeds[x] = 0
+        seed_scores = runSlowFuzz(args.build, optimal_seeds)
         
         #prune seeds at rate determined by specified depth
         #number of seeds to drop per round = args.seeds / (args.depth - 1)
         #this will leave a final round of the best performing seeds
-        drops = args.seeds // (args.depth-1)
         for _ in range(args.depth):
-            seed_scores.sort(key=lambda x: x[1])
-            seed_scores = seed_scores[drops:]
-            reduced_seeds = []
-            for x in seed_scores: reduced_seeds.append(x[0])
-            seed_scores = runSlowFuzz(args.build, reduced_seeds)
+            optimal_seeds = sorted(seed_scores, key=seed_scores.get)[-5:]
+            new_seeds, range_dict = generateSeedsSlowFuzz(optimal_seeds, range_dict)
+            seed_scores = runSlowFuzz(args.build, new_seeds)
             print("SCORES: ",seed_scores)
