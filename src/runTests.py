@@ -55,14 +55,13 @@ if __name__ == '__main__':
 	if args.libfuzzer:
 		if args.verbose:
 			print("Running tests on libFuzzer...")
-		for i in range(args.number):
-			# Generate initial seeds
-			seeds, seed_ranges, range_dict = main.initializeSeeds(args.seeds)
-			if args.verbose:
-				print(seeds, seed_ranges, range_dict)
 
 			if args.verbose:
 				print('Using path: ' + args.path)
+
+		for i in range(args.number):
+			# Generate initial seeds
+			seeds, seed_ranges, range_dict = main.initializeSeeds(args.seeds)
 
 			tests = ['boringssl-2016-02-12', 'c-ares-CVE-2016-5180', 'freetype2-2017', 'guetzli-2017-3-30', 'harfbuzz-1.3.2', 'json-2017-02-12', 'lcms-2017-03-21', 'libarchive-2017-01-04',
 					 'libjpeg-turbo-07-2017', 'libpng-1.2.56', 'libssh-2017-1272', 'libxml2-v2.9.2', 'llvm-libcxxabi-2017-01-27', 'openssl-1.0.1f', 'openssl-1.0.2d', 'openssl-1.1.0c',
@@ -78,16 +77,16 @@ if __name__ == '__main__':
 				# Run new implementation
 				optimal_seed, coverage_records = main.runOptimizationLibFuzzer(args.depth, args.path, args.time, seeds, range_dict)
 				if args.verbose:
-					print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
+					print("{0}: Optimal seed {1} obtained, yielding coverage {2} after {3} iterations.".format(i, optimal_seed, coverage_records[optimal_seed], args.time))
 				coverage = main.runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed])
 				if args.verbose:
-					print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
+					print("{0}: Optimal seed {1} yields coverage {2} after {3} iterations ({4} total iterations, including heuristic).".format(i, optimal_seed, coverage[optimal_seed], 
 						args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
 				# Run old implementation
 				coverage, seed = runDefaultLibFuzzer(args.path, args.explorationdepth+(args.time*args.depth*args.seeds))
 				if args.verbose:
-					print("Default random seed {0} yields coverage {1} after {2} iterations.".format(seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)))
+					print("{0}: Default random seed {1} yields coverage {2} after {3} iterations.".format(i, seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
 
 
