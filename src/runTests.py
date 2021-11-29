@@ -4,7 +4,10 @@ sys.path.append('../FTS')
 sys.path.append('../fuzzing')
 sys.path.append('../slowfuzz')
 sys.path.append('../woff')
-import argparse, csv
+import argparse, random, math, os, shutil, signal, csv
+from subprocess import STDOUT, TimeoutExpired
+from time import sleep
+from subprocess import Popen, PIPE, run
 import main
 
 def runDefaultLibFuzzer(name, timeout_period):
