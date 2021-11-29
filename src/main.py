@@ -17,7 +17,7 @@ def initializeEnv(name):
 	else:
 		print('Environment already set up... Continuing...')
 
-def runLibFuzzer(name, timeout_period, seeds=[1]):
+def runLibFuzzer(name, timeout_period, seeds=[1], verbose=False):
 	coverage = {}
 	for i in range(len(seeds)):
 		subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
@@ -28,7 +28,8 @@ def runLibFuzzer(name, timeout_period, seeds=[1]):
 				parsed2 = parsed1[1].split(' ft:')
 				coverage[seeds[i]] = int(parsed2[0])
 				break
-	print(coverage)
+	if verbose:
+		print(coverage)
 	return coverage
 
 def runSlowFuzz(build, seeds):
@@ -100,10 +101,10 @@ def initializeSeeds(seeds):
 	range_dict = {seeds[i]:seed_ranges[i] for i in range(len(seeds))}
 	return seeds, seed_ranges, range_dict
 
-def runOptimizationLibFuzzer(depth, path, time, seeds, range_dict):
+def runOptimizationLibFuzzer(depth, path, time, seeds, range_dict, verbose=False):
 	coverage_records = {}
 	for i in range(depth):
-		coverage = runLibFuzzer(path, time, seeds)
+		coverage = runLibFuzzer(path, time, seeds, verbose)
 		coverage_records = {**coverage_records, **coverage}
 		seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
 	optimal_seed = max(coverage_records, key=coverage_records.get)
@@ -157,10 +158,10 @@ if __name__ == '__main__':
 					shutil.rmtree('../' + tests[i] + '_tmp')
 		elif args.path in tests or args.path in debug_test:
 			initializeEnv(args.path)
-			optimal_seed, coverage_records = runOptimizationLibFuzzer(args.depth, args.path, args.time, seeds, range_dict)
+			optimal_seed, coverage_records = runOptimizationLibFuzzer(args.depth, args.path, args.time, seeds, range_dict, verbose=args.verbose)
 			if args.verbose:
 				print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
-			coverage = runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed])
+			coverage = runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed], verbose=args.verbose)
 			if args.verbose:
 				print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
 					args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))		
