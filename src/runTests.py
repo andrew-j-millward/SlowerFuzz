@@ -104,7 +104,7 @@ if __name__ == '__main__':
 				if args.verbose:
 					print("{0}: Default random seed {1} yields coverage {2} after {3} iterations.".format(i, seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
-				write(str(args.output) + '.csv', [optimal_seed, optimal_coverage, seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)])
+				write(str(args.output) + '.csv', [optimal_seed, optimal_coverage[optimal_seed], seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)])
 
 
 
