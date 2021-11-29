@@ -72,11 +72,17 @@ if __name__ == '__main__':
 			if args.verbose:
 				print('Using path: ' + args.path)
 
+		# Remove CSV if it exists and set to reset
 		if os.path.exists(str(args.output) + '.csv') and args.remove:
 			os.remove(str(args.output) + '.csv')
 
-		write(str(args.output) + ".csv", ["Optimal Seed", "Optimal Coverage", "Default Random Seed", "Default Random Coverage", "Maximum Total Number of Iterations"])
+		# Setup CSV headers
+		if not os.path.exists(str(args.output) + '.csv'):
+			write(str(args.output) + ".csv", ["Optimal Seed", "Optimal Coverage", "Default Random Seed", "Default Random Coverage", "Maximum Total Number of Iterations"])
+
+		# Run n iterations
 		for i in range(args.number):
+
 			# Generate initial seeds
 			seeds, seed_ranges, range_dict = main.initializeSeeds(args.seeds)
 
@@ -105,9 +111,8 @@ if __name__ == '__main__':
 				if args.verbose:
 					print("{0}: Default random seed {1} yields coverage {2} after {3} iterations.".format(i, seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
+				# Write results back to CSV
 				write(str(args.output) + '.csv', [optimal_seed, optimal_coverage[optimal_seed], seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)])
-
-
 
 	else:
 		print("Running tests on SlowFuzz")
