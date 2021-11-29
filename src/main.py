@@ -103,7 +103,7 @@ def initializeSeeds(seeds):
 def runOptimizationLibFuzzer(depth, path, time, seeds, range_dict):
 	coverage_records = {}
 	for i in range(depth):
-		coverage = runSlowFuzz(path, time, seeds)
+		coverage = runLibFuzzer(path, time, seeds)
 		coverage_records = {**coverage_records, **coverage}
 		seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
 	optimal_seed = max(coverage_records, key=coverage_records.get)
