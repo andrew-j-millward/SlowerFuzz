@@ -1,4 +1,4 @@
-import sys
+import sys, os
 sys.path.append('../')
 sys.path.append('../FTS')
 sys.path.append('../fuzzing')
@@ -28,6 +28,16 @@ def runDefaultLibFuzzer(name, timeout_period):
 			break
 	return coverage, seed
 
+def write(name, data):
+	try:
+		with open(name, 'a', newline='') as csv_file:
+			file_write = csv.writer(csv_file)
+			file_write.writerow(data)
+			csv_file.close()
+
+	except Exception as exception:
+		print(exception)
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
 						description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -41,7 +51,7 @@ if __name__ == '__main__':
 						default=25)
 	parser.add_argument('-c', '--carryOver', type=int, metavar='', help='Number of seed ranges to carry over to the next round',
 						default=25)
-	parser.add_argument('-p', '--path', type=str, metavar='', help='Path to target. I.e. input "woff2-2016-05-06" will lead to ..FTSwoff2-2016-05-06',
+	parser.add_argument('-p', '--path', type=str, metavar='', help='Path to target. I.e. input "woff2-2016-05-06" will lead to ../FTSwoff2-2016-05-06',
 						default='woff2-2016-05-06')
 	parser.add_argument('-l', '--libfuzzer', action='store_true', help='Use libFuzzer instead for coverage testing')
 	parser.add_argument('-b', '--build', type=str, metavar='', help='Path to build file for SlowFuzz implementation',
@@ -49,6 +59,8 @@ if __name__ == '__main__':
 	parser.add_argument('-v', '--verbose', action='store_true', help='Print debugging information')
 	parser.add_argument('-n', '--number', type=int, metavar='', help='Number of tests per case (new vs old)',
 						default=25)
+	parser.add_argument('-o', '--output', type=str, metavar='', help='CSV output file name (without extension)',
+						default='output')
 
 	args = parser.parse_args()
 
@@ -59,6 +71,10 @@ if __name__ == '__main__':
 			if args.verbose:
 				print('Using path: ' + args.path)
 
+		if os.path.exists(str(args.output) + '.csv'):
+			os.remove(str(args.output) + '.csv')
+
+		write(str(args.output) + ".csv", ["Optimal Seed", "Optimal Coverage", "Default Random Seed", "Default Random Coverage", "Maximum Total Number of Iterations"])
 		for i in range(args.number):
 			# Generate initial seeds
 			seeds, seed_ranges, range_dict = main.initializeSeeds(args.seeds)
@@ -78,15 +94,17 @@ if __name__ == '__main__':
 				optimal_seed, coverage_records = main.runOptimizationLibFuzzer(args.depth, args.path, args.time, seeds, range_dict)
 				if args.verbose:
 					print("{0}: Optimal seed {1} obtained, yielding coverage {2} after {3} iterations.".format(i, optimal_seed, coverage_records[optimal_seed], args.time))
-				coverage = main.runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed])
+				optimal_coverage = main.runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed])
 				if args.verbose:
-					print("{0}: Optimal seed {1} yields coverage {2} after {3} iterations ({4} total iterations, including heuristic).".format(i, optimal_seed, coverage[optimal_seed], 
+					print("{0}: Optimal seed {1} yields coverage {2} after {3} iterations ({4} total iterations, including heuristic).".format(i, optimal_seed, optimal_coverage[optimal_seed], 
 						args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
 				# Run old implementation
 				coverage, seed = runDefaultLibFuzzer(args.path, args.explorationdepth+(args.time*args.depth*args.seeds))
 				if args.verbose:
 					print("{0}: Default random seed {1} yields coverage {2} after {3} iterations.".format(i, seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)))
+
+				write(str(args.output) + '.csv', [optimal_seed, optimal_coverage, seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)])
 
 
 
