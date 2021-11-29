@@ -85,9 +85,9 @@ if __name__ == '__main__':
 						args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
 				# Run old implementation
-				coverage, seed = runDefaultLibFuzzer(args.path, args.explorationdepth)
+				coverage, seed = runDefaultLibFuzzer(args.path, args.explorationdepth+(args.time*args.depth*args.seeds))
 				if args.verbose:
-					print("Default random seed {0} yields coverage {1} after {2} iterations.".format(seed, coverage, args.explorationdepth))
+					print("Default random seed {0} yields coverage {1} after {2} iterations.".format(seed, coverage, args.explorationdepth+(args.time*args.depth*args.seeds)))
 
 
 
