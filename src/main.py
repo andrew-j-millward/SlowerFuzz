@@ -100,6 +100,15 @@ def initializeSeeds(seeds):
 	range_dict = {seeds[i]:seed_ranges[i] for i in range(len(seeds))}
 	return seeds, seed_ranges, range_dict
 
+def runOptimization(depth, path, time, seeds, range_dict):
+	coverage_records = {}
+	for i in range(depth):
+		coverage = runTest(path, time, seeds)
+		coverage_records = {**coverage_records, **coverage}
+		seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
+	optimal_seed = max(coverage_records, key=coverage_records.get)
+	return optimal_seed, coverage_records
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
 						description='This script optimizes evolutionary fuzzing by introducing structured randomness and eliminating inefficient paths early on.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -140,40 +149,21 @@ if __name__ == '__main__':
 		debug_test = ['woff']
 
 		# Initialize and Run
-		coverage_records = {}
 		if args.path == 'clean':
 			if args.verbose:
 				print('Reset branch triggered... Removing all testing environments')
 			for i in range(len(tests)):
 				if os.path.isdir('../' + tests[i] + '_tmp'):
 					shutil.rmtree('../' + tests[i] + '_tmp')
-		elif args.path in tests:
+		elif args.path in tests or args.path in debug_test:
 			initializeEnv(args.path)
-			for i in range(args.depth):
-				coverage = runTest(args.path, args.time, seeds)
-				coverage_records = {**coverage_records, **coverage}
-				seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
-			optimal_seed = max(coverage_records, key=coverage_records.get)
+			optimal_seed, coverage_records = runOptimization(args.depth, args.path, args.time, seeds, range_dict)
 			if args.verbose:
 				print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
 			coverage = runTest(args.path, args.explorationdepth, seeds=[optimal_seed])
 			if args.verbose:
 				print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
-					args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
-		elif args.path in debug_test:
-			initializeEnv(args.path)
-			for i in range(args.depth):
-				coverage = runTest(args.path, args.time, seeds)
-				coverage_records = {**coverage_records, **coverage}
-				seeds, range_dict = refineSeedsLibFuzzer(range_dict, coverage)
-			optimal_seed = max(coverage_records, key=coverage_records.get)
-			if args.verbose:
-				print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
-			coverage = runTest(args.path, args.explorationdepth, seeds=[optimal_seed])
-			if args.verbose:
-				print("Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(optimal_seed, coverage[optimal_seed], 
-					args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))
-		
+					args.explorationdepth, args.explorationdepth+(args.time*args.depth*args.seeds)))		
 
 	#slowfuzz build
 	else:
