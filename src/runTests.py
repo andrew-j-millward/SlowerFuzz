@@ -54,7 +54,7 @@ if __name__ == '__main__':
 			print("Running tests on libFuzzer...")
 		for i in range(args.number):
 			# Generate initial seeds
-			seeds, seed_ranges, range_dict = initializeSeeds(args.seeds)
+			seeds, seed_ranges, range_dict = main.initializeSeeds(args.seeds)
 			if args.verbose:
 				print(seeds, seed_ranges, range_dict)
 
