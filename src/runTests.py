@@ -57,6 +57,7 @@ if __name__ == '__main__':
 	parser.add_argument('-b', '--build', type=str, metavar='', help='Path to build file for SlowFuzz implementation',
 						default='isort')
 	parser.add_argument('-v', '--verbose', action='store_true', help='Print debugging information')
+	parser.add_argument('-r', '--remove', action='store_true', help='Remove old CSV before starting')
 	parser.add_argument('-n', '--number', type=int, metavar='', help='Number of tests per case (new vs old)',
 						default=25)
 	parser.add_argument('-o', '--output', type=str, metavar='', help='CSV output file name (without extension)',
@@ -71,7 +72,7 @@ if __name__ == '__main__':
 			if args.verbose:
 				print('Using path: ' + args.path)
 
-		if os.path.exists(str(args.output) + '.csv'):
+		if os.path.exists(str(args.output) + '.csv') and args.remove:
 			os.remove(str(args.output) + '.csv')
 
 		write(str(args.output) + ".csv", ["Optimal Seed", "Optimal Coverage", "Default Random Seed", "Default Random Coverage", "Maximum Total Number of Iterations"])
