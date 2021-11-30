@@ -25,7 +25,7 @@ def runDefaultLibFuzzer(name, timeout_period):
 	for j in range(len(output)):
 		if 'rss: ' in output[-j-1]:
 			parsed1 = output[-j-1].split('rss: ')
-			parsed2 = parsed1[1].split('Mb L:')
+			parsed2 = parsed1[1].split('Mb')
 			memory = int(parsed2[0])
 			break
 	for j in range(len(output)):
