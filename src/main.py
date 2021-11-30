@@ -32,7 +32,7 @@ def runLibFuzzer(name, timeout_period, seeds=[1], verbose=False):
 		for j in range(len(output)):
 			if 'rss: ' in output[-j-1]:
 				parsed1 = output[-j-1].split('rss: ')
-				parsed2 = parsed1[1].split('MB L:')
+				parsed2 = parsed1[1].split('Mb L:')
 				memory[seeds[i]] = int(parsed2[0])
 				break
 	if verbose:
