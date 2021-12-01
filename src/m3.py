@@ -82,6 +82,7 @@ def runSlowFuzz(name, timeout_period, seeds=[1], verbose=False):
 				break
 	if verbose:
 		print(coverage)
+                print(memory)
 	return coverage, memory
 
 def refineSeeds(range_dict, coverage):
