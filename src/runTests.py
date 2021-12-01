@@ -40,8 +40,8 @@ def runDefaultLibFuzzer(name, timeout_period):
 
 
 def runDefaultSlowFuzz(build, timeout_period):
-	coverage = {}
-	memory = {}
+	coverage = 0
+	memory = 0
 	seed = 0
 	output = run("""
 				./driver corpus -artifact_prefix=out -print_final_stats=1 \
@@ -55,14 +55,14 @@ def runDefaultSlowFuzz(build, timeout_period):
 			parsed2 = parsed1[1].split(' ft:')
 			parsed3 = parsed2[0].split(' ')
 			#print(parsed2,parsed3,parsed3[0])
-			coverage[seeds[i]] = int(parsed3[0])
+			coverage = int(parsed3[0])
 			break
 
 	for j in range(len(output)):
 		if 'rss: ' in output[-j - 1]:
 			parsed1 = output[-j - 1].split('rss: ')
 			parsed2 = parsed1[1].split('Mb')
-			memory[seeds[i]] = int(parsed2[0])
+			memory = int(parsed2[0])
 			break
 	for j in range(len(output)):
 		if 'Seed: ' in output[j]:
