@@ -40,36 +40,26 @@ def runDefaultLibFuzzer(name, timeout_period):
 
 
 def runDefaultSlowFuzz(build, timeout_period):
-	coverage = 0
-	memory = 0
-	seed = 0
-	output = run("""
-				./driver corpus -artifact_prefix=out -print_final_stats=1 \
-				-detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
-				-runs={1} -max_len=64 -death_node=1
-				""".format(build, timeout_period), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
-	output = output.stderr.split('\n')
-	for j in range(len(output)):
-		if 'cov:' in output[-j - 1]:
-			parsed1 = output[-j - 1].split('cov: ')
-			parsed2 = parsed1[1].split(' ft:')
-			parsed3 = parsed2[0].split(' ')
-			#print(parsed2,parsed3,parsed3[0])
-			coverage = int(parsed3[0])
-			break
+    slowdown = 0
+    seed = 0
+    output = run("""
+                ./driver corpus -artifact_prefix=out -print_final_stats=1 \
+                -detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
+                -runs={1} -max_len=64 -death_node=1
+                """.format(build, timeout_period), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
+    output = output.stderr.split('\n')
 
-	for j in range(len(output)):
-		if 'rss: ' in output[-j - 1]:
-			parsed1 = output[-j - 1].split('rss: ')
-			parsed2 = parsed1[1].split('Mb')
-			memory = int(parsed2[0])
-			break
-	for j in range(len(output)):
-		if 'Seed: ' in output[j]:
-			parsed1 = output[j].split('Seed: ')
-			seed = int(parsed1[1])
-			break
-	return coverage, memory, seed
+    for j in range(len(output)):
+        if 'slowest_unit_time_sec:' in output[-j - 1]:
+            parsed1 = output[-j - 1].split('slowest_unit_time_sec: ')
+            slowdown = int(parsed1[1])
+            break
+    for j in range(len(output)):
+        if 'Seed: ' in output[j]:
+            parsed1 = output[j].split('Seed: ')
+            seed = int(parsed1[1])
+            break
+    return slowdown, seed
 
 
 def write(name, data):
@@ -152,7 +142,8 @@ if __name__ == '__main__':
                 main.initializeEnv(args.path)
 
                 # Run new implementation
-                optimal_seed, coverage_records = main.runOptimization(args.depth, args.path, args.time, seeds, range_dict, args.libfuzzer)
+                optimal_seed, coverage_records = main.runOptimization(args.depth, args.path, args.time, seeds,
+                                                                      range_dict)
                 if args.verbose:
                     print("{0}: Optimal seed {1} obtained, yielding coverage {2} after {3} iterations.".format(i,
                                                                                                                optimal_seed,
@@ -198,7 +189,7 @@ if __name__ == '__main__':
         # Setup CSV headers
         if not os.path.exists(str(args.output) + '.csv'):
             write(str(args.output) + ".csv",
-                  ["Optimal Seed", "Optimal Coverage", "Default Random Seed", "Default Random Coverage",
+                  ["Optimal Seed", "Optimal Slowdown", "Default Random Seed", "Default Random Slowdown",
                    "Maximum Total Number of Iterations",
                    "Optimal Memory Consumption", "Default Random Memory Consumption"])
 
@@ -209,31 +200,28 @@ if __name__ == '__main__':
             seeds, seed_ranges, range_dict = main.initializeSeeds(args.seeds)
 
             # Run new implementation
-            optimal_seed, coverage_records = main.runOptimization(args.depth, args.path, args.time, seeds, range_dict,
-                                                                  args.libfuzzer)
+            optimal_seed, slowdown_records = main.runOptimization(args.depth, args.path, args.time, seeds,
+                                                                  range_dict,args.libfuzzer)
             if args.verbose:
-                print("{0}: Optimal seed {1} obtained, yielding coverage {2} after {3} iterations.".format(i,
+                print("{0}: Optimal seed {1} obtained, yielding slowdown {2} after {3} iterations.".format(i,
                                                                                                            optimal_seed,
-                                                                                                           coverage_records[
+                                                                                                           slowdown_records[
                                                                                                                optimal_seed],
                                                                                                            args.time))
-            optimal_coverage, optimal_memory = main.runSlowFuzz(args.path, args.explorationdepth, seeds=[optimal_seed])
+            optimal_slowdown = main.runSlowFuzz(args.path, args.explorationdepth, seeds=[optimal_seed])
             if args.verbose:
                 print(
-                    "{0}: Optimal seed {1} yields coverage {2} after {3} iterations ({4} total iterations, including heuristic).".format(
-                        i, optimal_seed, optimal_coverage[optimal_seed],
-                        args.explorationdepth, args.explorationdepth + (args.time * args.depth * args.seeds),
-                        optimal_memory[optimal_seed]))
+                    "{0}: Optimal seed {1} yields slowdown {2} after {3} iterations ({4} total iterations, including heuristic).".format(
+                        i, optimal_seed, optimal_slowdown[optimal_seed],
+                        args.explorationdepth, args.explorationdepth + (args.time * args.depth * args.seeds)))
 
             # Run old implementation
-            coverage, memory, seed = runDefaultSlowFuzz(args.path,
-                                                        args.explorationdepth + (args.time * args.depth * args.seeds))
+            slowdown, seed = runDefaultSlowFuzz(args.path, args.explorationdepth + (args.time * args.depth * args.seeds))
             if args.verbose:
-                print("{0}: Default random seed {1} yields coverage {2} after {3} iterations.".format(i, seed, coverage,
+                print("{0}: Default random seed {1} yields slowdown {2} after {3} iterations.".format(i, seed, slowdown,
                                                                                                       args.explorationdepth + (
                                                                                                                   args.time * args.depth * args.seeds)))
 
             # Write results back to CSV
-            write(str(args.output) + '.csv', [optimal_seed, optimal_coverage[optimal_seed], seed, coverage,
-                                              args.explorationdepth + (args.time * args.depth * args.seeds),
-                                              optimal_memory[optimal_seed], memory])
+            write(str(args.output) + '.csv', [optimal_seed, optimal_slowdown[optimal_seed], seed, slowdown,
+                                              args.explorationdepth + (args.time * args.depth * args.seeds)])

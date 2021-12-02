@@ -48,7 +48,7 @@ def runOptimization(depth, path, time, seeds, range_dict,  libfuzzer, verbose=Fa
 	coverage_records = {}
 	for i in range(depth):
 		if libfuzzer: coverage, memory = runLibFuzzer(path, time, seeds, verbose)
-		else: coverage, memory = runSlowFuzz(path, time, seeds, verbose)
+		else: coverage = runSlowFuzz(path, time, seeds, verbose)
 		coverage_records = {**coverage_records, **coverage}
 		seeds, range_dict = refineSeeds(range_dict, coverage)
 	optimal_seed = max(coverage_records, key=coverage_records.get)
@@ -57,8 +57,7 @@ def runOptimization(depth, path, time, seeds, range_dict,  libfuzzer, verbose=Fa
 
 #methods for slowFuzz
 def runSlowFuzz(name, timeout_period, seeds=[1], verbose=False):
-	coverage = {}
-	memory = {}
+	slowdown = {}
 	for i in range(len(seeds)):
 		output = run("""
 				./driver corpus -artifact_prefix=out -print_final_stats=1 \
@@ -68,22 +67,13 @@ def runSlowFuzz(name, timeout_period, seeds=[1], verbose=False):
 				""".format(timeout_period, seeds[i]), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
 		output = output.stderr.split('\n')
 		for j in range(len(output)):
-			if 'cov:' in output[-j - 1]:
-				parsed1 = output[-j - 1].split('cov: ')
-				parsed2 = parsed1[1].split(' ft:')
-				parsed3 = parsed2[0].split(' ')
-				coverage[seeds[i]] = int(parsed3[0])
-				break
-		for j in range(len(output)):
-			if 'rss: ' in output[-j - 1]:
-				parsed1 = output[-j - 1].split('rss: ')
-				parsed2 = parsed1[1].split('Mb')
-				memory[seeds[i]] = int(parsed2[0])
+			if 'slowest_unit_time_sec:' in output[-j - 1]:
+				parsed1 = output[-j - 1].split('slowest_unit_time_sec: ')
+				slowdown[seeds[i]] = int(parsed1[1])
 				break
 	if verbose:
-		print(coverage)
-		print(memory)
-	return coverage, memory
+		print(slowdown)
+	return slowdown
 
 def refineSeeds(range_dict, coverage):
 	optimal_seeds = sorted(coverage, key=coverage.get)[-5:]
@@ -196,12 +186,12 @@ if __name__ == '__main__':
 		os.chdir('../slowfuzz/apps/{0}/'.format(args.build))
 		os.system('make fuzzer')
 		os.system('make')
-		optimal_seed, coverage_records = runOptimization(args.depth, args.path, args.time, seeds, range_dict, args.libfuzzer, verbose=args.verbose)
+		optimal_seed, slowdown_records = runOptimization(args.depth, args.path, args.time, seeds, range_dict, args.libfuzzer, verbose=args.verbose)
 		if args.verbose:
-			print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed, coverage_records[optimal_seed], args.time))
-		coverage, memory = runSlowFuzz(args.path, args.explorationdepth, seeds=[optimal_seed],verbose=args.verbose)
+			print("Optimal seed {0} obtained, yielding slowdown {1} after {2} iterations.".format(optimal_seed, slowdown_records[optimal_seed], args.time))
+		slowdown = runSlowFuzz(args.path, args.explorationdepth, seeds=[optimal_seed],verbose=args.verbose)
 		if args.verbose:
 			print(
-				"Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(
-					optimal_seed, coverage[optimal_seed],
+				"Optimal seed {0} yields slowdown {1} after {2} iterations ({3} total iterations, including heuristic).".format(
+					optimal_seed, slowdown[optimal_seed],
 					args.explorationdepth, args.explorationdepth + (args.time * args.depth * args.seeds)))
