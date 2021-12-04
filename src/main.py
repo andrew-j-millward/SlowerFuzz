@@ -162,7 +162,7 @@ if __name__ == '__main__':
 				if os.path.isdir('../' + tests[i] + '_tmp'):
 					shutil.rmtree('../' + tests[i] + '_tmp')
 		elif args.path in tests or args.path in debug_test:
-			if args.path not in debug_test:
+			if args.path in tests:
 				initializeEnv(args.path)
 			optimal_seed, coverage_records = runOptimization(args.depth, args.path, args.time, seeds,
 																	  range_dict, args.libfuzzer, verbose=args.verbose,)
