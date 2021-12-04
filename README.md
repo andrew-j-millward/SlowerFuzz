@@ -15,9 +15,14 @@ Our modification for these projects, otherwise known as SlowerFuzz, utilizes a n
 - python3
 
 ## Installation
+
+Setup a Ubuntu 16.04 Virtual Machine environment to begin. 
+
 Follow the instructions on clang-4.0/clang++-4.0's documentation to install. This repository contains a version of libFuzzer and SlowFuzz that was current at the time of testing for simplicity. If you would like to update them, you can clone the git repositories present within each of the above tutorials.
 
 Now, verify that the installation of clang/clang++ is correct by running the test cases present within each of libFuzzer and SlowFuzz's documentation.
+
+**Note:** Sometimes it may be difficult to obtain a compatible version of clang/clang++. In such an instance we have provided a woff binary that is precompiled for Ubuntu 16.04 systems, so by simply cloning this repository, you should be able to reproduce the most basic level of functionality.
 
 You are now ready to run SlowerFuzz.
 
