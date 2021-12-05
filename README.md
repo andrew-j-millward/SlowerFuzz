@@ -41,7 +41,7 @@ sudo apt-get install autoconf
 sudo apt-get install clang++
 ./fuzzing/tutorial/libFuzzer/install-deps.sh
 ./fuzzing/tutorial/libFuzzer/install-clang.sh
-git clone git@github.com:sba6/SlowFuzzMods.git
+git clone https://github.com/sba6/SlowFuzzMods.git
 cd SlowFuzzMods/src/
 ```
 
