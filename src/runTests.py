@@ -143,7 +143,7 @@ if __name__ == '__main__':
 
                 # Run new implementation
                 optimal_seed, coverage_records = main.runOptimization(args.depth, args.path, args.time, seeds,
-                                                                      range_dict)
+                                                                      range_dict, args.libfuzzer)
                 if args.verbose:
                     print("{0}: Optimal seed {1} obtained, yielding coverage {2} after {3} iterations.".format(i,
                                                                                                                optimal_seed,

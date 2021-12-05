@@ -44,11 +44,13 @@ def runLibFuzzer(name, timeout_period, seeds=[1], verbose=False):
 		print(coverage)
 	return coverage, memory
 
-def runOptimization(depth, path, time, seeds, range_dict,  libfuzzer, verbose=False):
+def runOptimization(depth, path, time, seeds, range_dict, libfuzzer, verbose=False):
 	coverage_records = {}
 	for i in range(depth):
-		if libfuzzer: coverage, memory = runLibFuzzer(path, time, seeds, verbose)
-		else: coverage = runSlowFuzz(path, time, seeds, verbose)
+		if libfuzzer: 
+			coverage, memory = runLibFuzzer(path, time, seeds, verbose)
+		else: 
+			coverage = runSlowFuzz(path, time, seeds, verbose)
 		coverage_records = {**coverage_records, **coverage}
 		seeds, range_dict = refineSeeds(range_dict, coverage)
 	optimal_seed = max(coverage_records, key=coverage_records.get)
