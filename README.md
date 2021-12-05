@@ -49,7 +49,7 @@ cd SlowFuzzMods/src/
 
 ```
 cd src/
-python3 -v -l -p woff
+python3 main.py -v -l -p woff
 ```
 
 The above script will run the precompiled woff environment in a specialized folder. It will run libFuzzer (-l) with verbosity enabled (-v) and the path of woff (-p woff). The default configuration runs 5 elimination rounds of 25 seeds each, eliminates the worst 20 seeds, randomly selects 5 seeds per 5 remaining in close proximity, and then selects the best seed overall once finished. Then, the program, by default, runs that optimal seed on 3750000 iterations of the base algorithm from libFuzzer. An example output is shown below.
