@@ -16,6 +16,8 @@ Our modification for these projects, otherwise known as SlowerFuzz, utilizes a n
 
 ## Installation
 
+### Brief Overview
+
 Setup a Ubuntu 16.04 Virtual Machine environment to begin. 
 
 Follow the instructions on clang-4.0/clang++-4.0's documentation to install. This repository contains a version of libFuzzer and SlowFuzz that was current at the time of testing for simplicity. If you would like to update them, you can clone the git repositories present within each of the above tutorials.
@@ -25,6 +27,23 @@ Now, verify that the installation of clang/clang++ is correct by running the tes
 **Note:** Sometimes it may be difficult to obtain a compatible version of clang/clang++. In such an instance we have provided a woff binary that is precompiled for Ubuntu 16.04 systems, so by simply cloning this repository, you should be able to reproduce the most basic level of functionality.
 
 You are now ready to run SlowerFuzz.
+
+### Exact Steps
+
+```
+mkdir SlowFuzzerEnv
+cd SlowFuzzerEnv
+sudo apt-get update
+sudo apt-get --yes install git
+git clone https://github.com/google/fuzzing.git fuzzing
+git clone https://github.com/google/fuzzer-test-suite.git FTS
+sudo apt-get install autoconf
+sudo apt-get install clang++
+./fuzzing/tutorial/libFuzzer/install-deps.sh
+./fuzzing/tutorial/libFuzzer/install-clang.sh
+git clone git@github.com:sba6/SlowFuzzMods.git
+cd SlowFuzzMods/src/
+```
 
 ## Usage
 
