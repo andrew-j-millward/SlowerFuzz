@@ -165,19 +165,16 @@ if __name__ == '__main__':
 			if args.path in tests:
 				initializeEnv(args.path)
 			optimal_seed, coverage_records = runOptimization(args.depth, args.path, args.time, seeds,
-																	  range_dict, args.libfuzzer, verbose=args.verbose,)
+						range_dict, args.libfuzzer, verbose=args.verbose)
 			if args.verbose:
 				print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed,
-																									  coverage_records[
-																										  optimal_seed],
-																									  args.time))
+						coverage_records[optimal_seed], args.time))
 			coverage, memory = runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed],
-											verbose=args.verbose)
+						verbose=args.verbose)
 			if args.verbose:
 				print(
 					"Optimal seed {0} yields coverage {1} after {2} iterations ({3} total iterations, including heuristic).".format(
-						optimal_seed, coverage[optimal_seed],
-						args.explorationdepth, args.explorationdepth + (args.time * args.depth * args.seeds)))
+						optimal_seed, coverage[optimal_seed], args.explorationdepth, args.explorationdepth + (args.time * args.depth * args.seeds)))
 
 	# slowfuzz build
 	else:
