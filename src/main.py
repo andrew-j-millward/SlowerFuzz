@@ -13,27 +13,55 @@ from subprocess import Popen, PIPE, run
 
 #methods for libFuzzer
 def initializeEnv(name):
+	"""
+	Method to take a environment name and attempt to set it up using the setup shell script we provided.
+	Each setup script is very simple and needs no explanation as it is documented in libFuzzer itself.
+	"""
+
+	# Check if environement is already set up
 	if not os.path.isdir('../' + name + '_tmp'):
+
+		# Run process to execute script
 		shellStream = os.popen('sh libFuzzerSetup/setup_' + name + '.sh')
 		out = shellStream.read()
+
+		# Print output
 		print(out)
+
+	# Environment is already setup, so no execution necessary
 	else:
 		print('Environment already set up... Continuing...')
 
 
 def runLibFuzzer(name, timeout_period, seeds=[1], verbose=False):
+	"""
+	Method to run libFuzzer on a given set of seeds for a specific number of iterations (timeout_period).
+	The run statistics will be aggregated and output in terms of coverage and memory since those are
+	the statistics of interest of libFuzzer.
+	"""
+
 	coverage = {}
 	memory = {}
+
+	# Run for every seed
 	for i in range(len(seeds)):
+
+		# Generate subprocess to execute binary with given parameters
 		subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer -seed=' + str(seeds[i]) + ' -runs=' + str(
 			timeout_period), stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+
+		# Split output of subprocess
 		output = subpro.stderr.split('\n')
+
+		# Extract the last mention of coverage's value
 		for j in range(len(output)):
 			if 'cov:' in output[-j - 1]:
 				parsed1 = output[-j - 1].split('cov: ')
 				parsed2 = parsed1[1].split(' ft:')
 				coverage[seeds[i]] = int(parsed2[0])
 				break
+
+		# Extract the last mention of rss's (memory) value
 		for j in range(len(output)):
 			if 'rss: ' in output[-j - 1]:
 				parsed1 = output[-j - 1].split('rss: ')
@@ -41,19 +69,38 @@ def runLibFuzzer(name, timeout_period, seeds=[1], verbose=False):
 				memory[seeds[i]] = int(parsed2[0])
 				break
 	if verbose:
-		print(coverage)
+		print(coverage, memory)
 	return coverage, memory
 
 def runOptimization(depth, path, time, seeds, range_dict, libfuzzer, verbose=False):
+	"""
+	Method for computing the optimal seed. Given a specific number of iterations and seeds
+	to test, find the best seed for a given coverage and return that seed and the records.
+	"""
+
 	coverage_records = {}
+
+	# Iterate through all generations
 	for i in range(depth):
+
+		# If we are using libFuzzer, run the libFuzzer method
 		if libfuzzer: 
 			coverage, memory = runLibFuzzer(path, time, seeds, verbose)
+		
+		# If we are using SlowFuzz, run the SlowFuzz method
 		else: 
 			coverage = runSlowFuzz(path, time, seeds, verbose)
+
+		# Grab coverage records
 		coverage_records = {**coverage_records, **coverage}
+
+		# Refine seeds with specialized method
 		seeds, range_dict = refineSeeds(range_dict, coverage)
+
+	# Grab maximum seed
 	optimal_seed = max(coverage_records, key=coverage_records.get)
+
+	# Return best seed
 	return optimal_seed, coverage_records
 
 
