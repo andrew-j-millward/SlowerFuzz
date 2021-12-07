@@ -13,12 +13,18 @@ import main
 
 
 def runDefaultLibFuzzer(name, timeout_period):
+     """
+    Method to run the default libFuzzer implementation for the specified number of iterations.
+    """
     coverage = 0
     memory = 0
     seed = 0
+    # run the shell script
     subpro = run('../' + name + '_tmp/' + str(name) + '-fsanitize_fuzzer ' + '-runs=' + str(timeout_period),
                  stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
     output = subpro.stderr.split('\n')
+    
+    # obtain the coverage, memory, and seed from the output.
     for j in range(len(output)):
         if 'cov: ' in output[-j - 1]:
             parsed1 = output[-j - 1].split('cov: ')
@@ -40,8 +46,12 @@ def runDefaultLibFuzzer(name, timeout_period):
 
 
 def runDefaultSlowFuzz(build, timeout_period):
+    """
+    Method to run the default SlowFuzz implementation for the specified number of iterations.
+    """
     slowdown = 0
     seed = 0
+    # run shell script
     output = run("""
                 ./driver corpus -artifact_prefix=out -print_final_stats=1 \
                 -detect_leaks=0 -rss_limit_mb=10000 -shuffle=0 \
@@ -49,6 +59,7 @@ def runDefaultSlowFuzz(build, timeout_period):
                 """.format(build, timeout_period), stdout=PIPE, stderr=PIPE, shell=True, universal_newlines=True)
     output = output.stderr.split('\n')
 
+    # obtain the slowdown and seed from the output
     for j in range(len(output)):
         if 'slowest_unit_time_sec:' in output[-j - 1]:
             parsed1 = output[-j - 1].split('slowest_unit_time_sec: ')
@@ -63,6 +74,9 @@ def runDefaultSlowFuzz(build, timeout_period):
 
 
 def write(name, data):
+    """
+    Method to write data to csv file
+    """
     try:
         with open(name, 'a', newline='') as csv_file:
             file_write = csv.writer(csv_file)
