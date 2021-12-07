@@ -75,8 +75,6 @@ python3 main.py -v
 ```
 This script will run the SlowFuzz routine on a selected binary, insertion sort by default. Like for libFuzzer, 25 random seeds are generated and the top ones are selected and used to create 5 similar seeds. With a default number of elimination rounds at 5, the top seed is chosen and a default 3,750,000 iterations are done.
 
-```
-
 We have also included a testing script for convenience of running many iterations to evaluate performance. This can be run in the following manner:
 
 ```
@@ -84,4 +82,9 @@ cd src/
 python3 runTests.py -v -l -p woff -n 5
 ```
 
-The above command will run 5 iterations of both our heuristic and the default configuration. The results of this run will be output into an `output.csv` file, containing each seed used, either selected by our heuristic or randomly selected by libFuzzer itself, the coverage after a total 5000000 iterations of each, and the peak memory consumption used by the algorithm in the process of fuzzing. As before, this is also implemented for the program's SlowFuzz counterpart but instead optimizes for the execution time statistic rather than the coverage.
+The above command will run 5 iterations of both our heuristic and the default configuration. The results of this run will be output into an `output.csv` file, containing each seed used, either selected by our heuristic or randomly selected by libFuzzer itself, the coverage after a total 5000000 iterations of each, and the peak memory consumption used by the algorithm in the process of fuzzing. As before, this is also implemented for the program's SlowFuzz counterpart but instead optimizes for the execution time statistic rather than the coverage. That can be run with the below command:
+
+```
+cd src/
+python3 runTests.py -v -n 5
+```
