@@ -257,11 +257,13 @@ if __name__ == '__main__':
 		elif args.path in tests or args.path in debug_test:
 			if args.path in tests:
 				initializeEnv(args.path)
+			# obtain optimized results from the initial seeds
 			optimal_seed, coverage_records = runOptimization(args.depth, args.path, args.time, seeds,
 						range_dict, args.libfuzzer, verbose=args.verbose)
 			if args.verbose:
 				print("Optimal seed {0} obtained, yielding coverage {1} after {2} iterations.".format(optimal_seed,
 						coverage_records[optimal_seed], args.time))
+			# obtain the results from the optimized seed
 			coverage, memory = runLibFuzzer(args.path, args.explorationdepth, seeds=[optimal_seed],
 						verbose=args.verbose)
 			if args.verbose:
@@ -274,12 +276,15 @@ if __name__ == '__main__':
 		if args.verbose:
 			print("Running using SlowFuzz build...")
 			print("Using implementation at: ", args.build)
+		# build the application being tested
 		os.chdir('../slowfuzz/apps/{0}/'.format(args.build))
 		os.system('make fuzzer')
 		os.system('make')
+		# find the optimal seed from the initial ones
 		optimal_seed, slowdown_records = runOptimization(args.depth, args.path, args.time, seeds, range_dict, args.libfuzzer, verbose=args.verbose)
 		if args.verbose:
 			print("Optimal seed {0} obtained, yielding slowdown {1} after {2} iterations.".format(optimal_seed, slowdown_records[optimal_seed], args.time))
+		# obtain the results from the optimal seed
 		slowdown = runSlowFuzz(args.path, args.explorationdepth, seeds=[optimal_seed],verbose=args.verbose)
 		if args.verbose:
 			print(
