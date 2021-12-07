@@ -69,6 +69,14 @@ Optimal seed 824630719 yields coverage 660 after 3750000 iterations (5000000 tot
 
 This scheme also works for SlowFuzz by simply omitting the -l and -p options. 
 
+```
+cd src/
+python3 main.py -v
+```
+This script will run the SlowFuzz routine on a selected binary, insertion sort by default. Like for libFuzzer, 25 random seeds are generated and the top ones are selected and used to create 5 similar seeds. With a default number of elimination rounds at 5, the top seed is chosen and a default 3,750,000 iterations are done.
+
+```
+
 We have also included a testing script for convenience of running many iterations to evaluate performance. This can be run in the following manner:
 
 ```
