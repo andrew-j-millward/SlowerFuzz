@@ -13,7 +13,7 @@ import main
 
 
 def runDefaultLibFuzzer(name, timeout_period):
-     """
+    """
     Method to run the default libFuzzer implementation for the specified number of iterations.
     """
     coverage = 0
